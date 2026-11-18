@@ -23,16 +23,20 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ResumeHistory
+} from '../../models/resume-pipeline/resumeHistory';
+
+import type {
+  ScanReport
+} from '../../models/resume-pipeline/scanReport';
+
+import type {
   UploadResume
 } from '../../models/resume-pipeline/uploadResume';
 
 import type {
   V1UsersApiV1UploadResumeCreateBody
 } from '../../models/resume-pipeline/v1UsersApiV1UploadResumeCreateBody';
-
-import type {
-  ScanReport
-} from '../../models/scanReport';
 
 import { customInstance } from '../../../axios-instance';
 
@@ -239,3 +243,108 @@ export const useV1UsersApiV1UploadResumeCreate = <TError = unknown,
       > => {
       return useMutation(getV1UsersApiV1UploadResumeCreateMutationOptions(options), queryClient);
     }
+    /**
+ * Retrieves a list of resumes and their scan history for the authenticated user.
+ * @summary Get User Scan History
+ */
+export const v1UsersScansHistoryList = (
+
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<ResumeHistory[]>(
+      {url: `/api/v1/users/scans/history/`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getV1UsersScansHistoryListQueryKey = () => {
+    return [
+    `/api/v1/users/scans/history/`
+    ] as const;
+    }
+
+
+export const getV1UsersScansHistoryListQueryOptions = <TData = Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getV1UsersScansHistoryListQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof v1UsersScansHistoryList>>> = ({ signal }) => v1UsersScansHistoryList(requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type V1UsersScansHistoryListQueryResult = NonNullable<Awaited<ReturnType<typeof v1UsersScansHistoryList>>>
+export type V1UsersScansHistoryListQueryError = unknown
+
+
+/**
+ * Retrieves a list of resumes and their scan history for the authenticated user.
+ * @summary Get User Scan History
+ */
+export function useV1UsersScansHistoryList<TData = Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof v1UsersScansHistoryList>>,
+          TError,
+          Awaited<ReturnType<typeof v1UsersScansHistoryList>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * Retrieves a list of resumes and their scan history for the authenticated user.
+ * @summary Get User Scan History
+ */
+export function useV1UsersScansHistoryList<TData = Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof v1UsersScansHistoryList>>,
+          TError,
+          Awaited<ReturnType<typeof v1UsersScansHistoryList>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * Retrieves a list of resumes and their scan history for the authenticated user.
+ * @summary Get User Scan History
+ */
+export function useV1UsersScansHistoryList<TData = Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * Retrieves a list of resumes and their scan history for the authenticated user.
+ * @summary Get User Scan History
+ */
+export function useV1UsersScansHistoryList<TData = Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1UsersScansHistoryList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getV1UsersScansHistoryListQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
