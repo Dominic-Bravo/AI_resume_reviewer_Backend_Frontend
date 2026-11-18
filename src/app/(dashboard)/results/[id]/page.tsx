@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   ArrowLeft,
   Copy,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -41,27 +42,33 @@ export default function ScanResultsPage() {
     query: {
       refetchInterval: (query) => {
         const status = query.state.data?.status;
-        return status === "PENDING" ? 2500 : false;
+        return status === "PENDING" || status === "PROCESSING" ? 2500 : false;
       },
     },
   });
 
-  const copyCritique = (text: string) => {
+  const copyText = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard");
+    toast.success("Copied suggested rewrite to clipboard");
   };
 
-  if (isLoading || scan?.status === "PENDING") {
+  if (
+    isLoading ||
+    scan?.status === "PENDING" ||
+    scan?.status === "PROCESSING"
+  ) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
         <div className="space-y-1">
           <h2 className="text-xl font-semibold">
-            Analyzing your resume with AI...
+            {scan?.status === "PROCESSING"
+              ? "AI is generating critiques..."
+              : "Analyzing resume..."}
           </h2>
           <p className="text-sm text-muted-foreground">
-            Extracting experience, checking ATS keywords, and rewriting weak
-            bullet points.
+            Evaluating category alignment, keyword gaps, and section-by-section
+            improvements.
           </p>
         </div>
       </div>
@@ -77,12 +84,12 @@ export default function ScanResultsPage() {
             Analysis Failed
           </CardTitle>
           <CardDescription>
-            We couldn&apos;t complete the analysis for this document. Your
-            credit has not been lost if the task failed.
+            We couldn&apos;t complete the analysis for this document. Your scan
+            credit has been preserved.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button render={<Link href="/dashboard" />}>
+          <Button nativeButton={false} render={<Link href="/dashboard" />}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Try Another Resume
           </Button>
@@ -91,15 +98,9 @@ export default function ScanResultsPage() {
     );
   }
 
-  const categories = [
-    {
-      label: "Experience Impact",
-      value: scan.category_scores?.experience ?? 0,
-    },
-    { label: "Skills Alignment", value: scan.category_scores?.skills ?? 0 },
-    { label: "ATS Formatting", value: scan.category_scores?.formatting ?? 0 },
-    { label: "Role Relevance", value: scan.category_scores?.relevance ?? 0 },
-  ];
+  const categoryEntries = scan.category_scores
+    ? Object.entries(scan.category_scores)
+    : [];
 
   return (
     <div className="space-y-8">
@@ -121,13 +122,17 @@ export default function ScanResultsPage() {
             </p>
           )}
         </div>
-        <Button variant="outline" render={<Link href="/dashboard" />}>
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link href="/dashboard" />}
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Scan Another
         </Button>
       </div>
 
-      {/* Overall Score & Category Breakdown */}
+      {/* Overall Score & Dynamic Category Breakdown */}
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="flex flex-col justify-center">
           <CardHeader>
@@ -145,19 +150,29 @@ export default function ScanResultsPage() {
           <CardHeader>
             <CardTitle>Category Breakdown</CardTitle>
             <CardDescription>
-              How your resume performs across key recruiter signals
+              Performance across evaluated professional dimensions
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
-            {categories.map((cat) => (
-              <div key={cat.label} className="space-y-1.5">
-                <div className="flex justify-between text-sm font-medium">
-                  <span>{cat.label}</span>
-                  <span>{cat.value}%</span>
-                </div>
-                <Progress value={cat.value} className="h-2" />
-              </div>
-            ))}
+            {categoryEntries.length > 0 ? (
+              categoryEntries.map(([key, value]) => {
+                const label =
+                  key.charAt(0).toUpperCase() + key.slice(1).replace("_", " ");
+                return (
+                  <div key={key} className="space-y-1.5">
+                    <div className="flex justify-between text-sm font-medium">
+                      <span>{label}</span>
+                      <span>{value}%</span>
+                    </div>
+                    <Progress value={value} className="h-2" />
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No category scores available.
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -167,12 +182,12 @@ export default function ScanResultsPage() {
         <CardHeader>
           <CardTitle>Missing Keywords</CardTitle>
           <CardDescription>
-            High-signal terms from the job description missing or
-            underrepresented in your resume
+            High-priority terms from the job description not detected in your
+            resume
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {scan.missing_keywords.length > 0 ? (
+          {scan.missing_keywords && scan.missing_keywords.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {scan.missing_keywords.map((kw) => (
                 <Badge key={kw} variant="destructive">
@@ -188,39 +203,61 @@ export default function ScanResultsPage() {
         </CardContent>
       </Card>
 
-      {/* Actionable Bullet Critiques */}
+      {/* Structured Section Critiques */}
       <Card>
         <CardHeader>
-          <CardTitle>Bullet Point Critiques & Improvements</CardTitle>
+          <CardTitle>Section-by-Section Critiques</CardTitle>
           <CardDescription>
-            Actionable rewrites to quantify impact and strengthen action verbs
+            Targeted feedback and quantified rewrites for your resume
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {scan.bullet_critiques.length > 0 ? (
+          {scan.section_critiques && scan.section_critiques.length > 0 ? (
             <Accordion className="w-full">
-              {scan.bullet_critiques.map((critique, index) => (
-                <AccordionItem key={index} value={`item-${index}`}>
+              {scan.section_critiques.map((item, index) => (
+                <AccordionItem key={index} value={`critique-${index}`}>
                   <AccordionTrigger className="text-left text-sm font-medium">
-                    Improvement #{index + 1}: {critique.slice(0, 75)}...
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {item.section}
+                      </Badge>
+                      <span className="truncate">{item.target_item}</span>
+                    </div>
                   </AccordionTrigger>
-                  <AccordionContent className="space-y-3 pt-2 text-sm leading-relaxed">
-                    <p>{critique}</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => copyCritique(critique)}
-                    >
-                      <Copy className="mr-2 h-3.5 w-3.5" />
-                      Copy Suggestion
-                    </Button>
+                  <AccordionContent className="space-y-4 pt-3 text-sm leading-relaxed">
+                    <div className="space-y-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Critique
+                      </span>
+                      <p className="text-muted-foreground">{item.critique}</p>
+                    </div>
+
+                    <div className="space-y-2 rounded-lg border bg-muted/40 p-4">
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+                          <Sparkles className="h-3.5 w-3.5" />
+                          Suggested Rewrite
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyText(item.suggested_rewrite)}
+                        >
+                          <Copy className="mr-1.5 h-3.5 w-3.5" />
+                          Copy
+                        </Button>
+                      </div>
+                      <p className="font-medium text-foreground">
+                        {item.suggested_rewrite}
+                      </p>
+                    </div>
                   </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Your bullet points look strong!
+              All sections look solid!
             </p>
           )}
         </CardContent>
