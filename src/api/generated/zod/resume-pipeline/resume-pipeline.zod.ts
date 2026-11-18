@@ -40,7 +40,7 @@ export const V1UsersApiV1ScansRetrieveResponse = zod.object({
 })
 
 /**
- * @summary Upload and Scan Resume (Idempotent)
+ * @summary Upload and Scan Resume
  */
 export const V1UsersApiV1UploadResumeCreateBody = zod.object({
   "file": zod.instanceof(Blob),

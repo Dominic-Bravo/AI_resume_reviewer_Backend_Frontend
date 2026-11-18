@@ -21,6 +21,10 @@ import type {
   Register
 } from '../../models/authentication/register';
 
+import type {
+  SocialLogin
+} from '../../models/authentication/socialLogin';
+
 import { customInstance } from '../../../axios-instance';
 
 // https://stackoverflow.com/questions/49579094/typescript-conditional-types-filter-out-readonly-properties-pick-only-requir/49579497#49579497
@@ -56,6 +60,75 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
+ * Accepts Google OAuth code/token and authenticates or registers user.
+ * @summary Google OAuth2 Login
+ */
+export const v1UsersAuthGoogleCreate = (
+    socialLogin?: SocialLogin,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<SocialLogin>(
+      {url: `/api/v1/users/auth/google/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: socialLogin, signal
+    },
+      options);
+    }
+
+
+
+
+export const getV1UsersAuthGoogleCreateMutationKey = () => ['v1UsersAuthGoogleCreate'] as const;
+
+export const getV1UsersAuthGoogleCreateMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>, TError,V1UsersAuthGoogleCreateMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>, TError,V1UsersAuthGoogleCreateMutationVariables, TContext> => {
+
+const mutationKey = getV1UsersAuthGoogleCreateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>, V1UsersAuthGoogleCreateMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  v1UsersAuthGoogleCreate(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type V1UsersAuthGoogleCreateMutationResult = NonNullable<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>>
+    export type V1UsersAuthGoogleCreateMutationBody = SocialLogin | undefined
+    export type V1UsersAuthGoogleCreateMutationError = unknown
+    export type V1UsersAuthGoogleCreateMutationVariables = {data?: SocialLogin}
+
+    /**
+ * Accepts Google OAuth code/token and authenticates or registers user.
+ * @summary Google OAuth2 Login
+ */
+export const useV1UsersAuthGoogleCreate = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>, TError,V1UsersAuthGoogleCreateMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>,
+        TError,
+        V1UsersAuthGoogleCreateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getV1UsersAuthGoogleCreateMutationOptions(options), queryClient);
+    }
+    /**
  * Validates credentials, returns an access token, and sets the HttpOnly refresh cookie.
  * @summary Authenticate user and login
  */
@@ -123,6 +196,69 @@ export const useAuthLogin = <TError = unknown,
         TContext
       > => {
       return useMutation(getAuthLoginMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Logout User
+ */
+export const v1UsersLogoutCreate = (
+
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<void>(
+      {url: `/api/v1/users/logout/`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getV1UsersLogoutCreateMutationKey = () => ['v1UsersLogoutCreate'] as const;
+
+export const getV1UsersLogoutCreateMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1UsersLogoutCreate>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof v1UsersLogoutCreate>>, TError,void, TContext> => {
+
+const mutationKey = getV1UsersLogoutCreateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof v1UsersLogoutCreate>>, void> = () => {
+
+
+          return  v1UsersLogoutCreate(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type V1UsersLogoutCreateMutationResult = NonNullable<Awaited<ReturnType<typeof v1UsersLogoutCreate>>>
+
+    export type V1UsersLogoutCreateMutationError = unknown
+
+
+    /** @summary Logout User */
+export const useV1UsersLogoutCreate = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1UsersLogoutCreate>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof v1UsersLogoutCreate>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getV1UsersLogoutCreateMutationOptions(options), queryClient);
     }
     /**
  * Creates a new user account, returns an access token, and sets the HttpOnly refresh cookie.

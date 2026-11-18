@@ -23,16 +23,16 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  ScanReport
-} from '../../models/resume-pipeline/scanReport';
-
-import type {
   UploadResume
 } from '../../models/resume-pipeline/uploadResume';
 
 import type {
   V1UsersApiV1UploadResumeCreateBody
 } from '../../models/resume-pipeline/v1UsersApiV1UploadResumeCreateBody';
+
+import type {
+  ScanReport
+} from '../../models/scanReport';
 
 import { customInstance } from '../../../axios-instance';
 
@@ -162,7 +162,7 @@ export function useV1UsersApiV1ScansRetrieve<TData = Awaited<ReturnType<typeof v
 
 
 /**
- * @summary Upload and Scan Resume (Idempotent)
+ * @summary Upload and Scan Resume
  */
 export const v1UsersApiV1UploadResumeCreate = (
     v1UsersApiV1UploadResumeCreateBody?: V1UsersApiV1UploadResumeCreateBody,
@@ -228,7 +228,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type V1UsersApiV1UploadResumeCreateMutationError = unknown
     export type V1UsersApiV1UploadResumeCreateMutationVariables = {data?: V1UsersApiV1UploadResumeCreateBody}
 
-    /** @summary Upload and Scan Resume (Idempotent) */
+    /** @summary Upload and Scan Resume */
 export const useV1UsersApiV1UploadResumeCreate = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1UsersApiV1UploadResumeCreate>>, TError,V1UsersApiV1UploadResumeCreateMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<

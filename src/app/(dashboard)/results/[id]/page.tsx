@@ -38,12 +38,17 @@ export default function ScanResultsPage() {
     data: scan,
     isLoading,
     isError,
+    refetch,
   } = useV1UsersApiV1ScansRetrieve(scanId, {
     query: {
       refetchInterval: (query) => {
-        const status = query.state.data?.status;
-        return status === "PENDING" || status === "PROCESSING" ? 2500 : false;
+        const data = query.state.data;
+        if (!data) return 2500;
+        return data.status === "PENDING" || data.status === "PROCESSING"
+          ? 2500
+          : false;
       },
+      refetchIntervalInBackground: true,
     },
   });
 
@@ -71,6 +76,14 @@ export default function ScanResultsPage() {
             improvements.
           </p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+          className="mt-2"
+        >
+          Check Status Now
+        </Button>
       </div>
     );
   }

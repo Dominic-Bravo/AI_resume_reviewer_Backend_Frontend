@@ -5,7 +5,7 @@
  */
 
 export type V1UsersApiV1UploadResumeCreateBody = {
-  /** PDF resume file */
+  /** PDF or DOCX resume file */
   file: Blob | File;
   /** Optional target job title */
   target_job_title?: string;

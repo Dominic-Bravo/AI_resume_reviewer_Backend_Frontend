@@ -7,6 +7,22 @@ import * as zod from 'zod';
 
 
 /**
+ * Accepts Google OAuth code/token and authenticates or registers user.
+ * @summary Google OAuth2 Login
+ */
+export const V1UsersAuthGoogleCreateBody = zod.object({
+  "access_token": zod.string().optional(),
+  "code": zod.string().optional(),
+  "id_token": zod.string().optional()
+})
+
+export const V1UsersAuthGoogleCreateResponse = zod.object({
+  "access_token": zod.string().optional(),
+  "code": zod.string().optional(),
+  "id_token": zod.string().optional()
+})
+
+/**
  * Validates credentials, returns an access token, and sets the HttpOnly refresh cookie.
  * @summary Authenticate user and login
  */
@@ -19,6 +35,11 @@ export const AuthLoginResponse = zod.object({
   "email": zod.email(),
   "password": zod.string()
 })
+
+/**
+ * @summary Logout User
+ */
+export const V1UsersLogoutCreateResponse = zod.unknown()
 
 /**
  * Creates a new user account, returns an access token, and sets the HttpOnly refresh cookie.
