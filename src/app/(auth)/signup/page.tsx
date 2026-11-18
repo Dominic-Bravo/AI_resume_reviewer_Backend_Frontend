@@ -11,6 +11,7 @@ import { AxiosError } from "axios";
 import { useAuthRegister } from "@/api/generated/endpoints/authentication/authentication";
 import { AuthRegisterBody } from "@/api/generated/zod/authentication/authentication.zod";
 import { setAccessToken } from "@/api/axios-instance";
+import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -133,6 +134,7 @@ export default function SignupPage() {
                 Sign in
               </Link>
             </p>
+            <GoogleAuthButton mode="login" disabled={isPending} />
           </CardFooter>
         </form>
       </Card>

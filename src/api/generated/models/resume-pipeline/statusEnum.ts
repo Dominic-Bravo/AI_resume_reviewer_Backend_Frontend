@@ -6,6 +6,7 @@
 
 /**
  * * `PENDING` - Pending
+ * * `PROCESSING` - Processing
  * * `FAILED` - Failed
  * * `DONE` - Done
  */
@@ -14,6 +15,7 @@ export type StatusEnum = typeof StatusEnum[keyof typeof StatusEnum];
 
 export const StatusEnum = {
   PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
   FAILED: 'FAILED',
   DONE: 'DONE',
 } as const;

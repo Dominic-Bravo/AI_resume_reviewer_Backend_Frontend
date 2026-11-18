@@ -4,6 +4,7 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { ScanReportCategoryScores } from './scanReportCategoryScores';
+import type { SectionCritique } from './sectionCritique';
 import type { StatusEnum } from './statusEnum';
 
 export interface ScanReport {
@@ -24,8 +25,8 @@ export interface ScanReport {
   readonly category_scores: ScanReportCategoryScores;
   /** List of missing keywords from the job description. */
   missing_keywords: string[];
-  /** Actionable feedback for resume bullet points. */
-  bullet_critiques: string[];
+  /** Section-by-section actionable feedback across the resume. */
+  readonly section_critiques: readonly SectionCritique[];
   status?: StatusEnum;
   readonly created_at: string;
 }

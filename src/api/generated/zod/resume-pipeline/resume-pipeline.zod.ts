@@ -27,15 +27,15 @@ export const V1UsersApiV1ScansRetrieveResponse = zod.object({
   "target_job_title": zod.string().max(v1UsersApiV1ScansRetrieveResponseTargetJobTitleMax).nullish(),
   "target_job_desc": zod.string().nullish(),
   "overall_score": zod.int().min(v1UsersApiV1ScansRetrieveResponseOverallScoreMin).max(v1UsersApiV1ScansRetrieveResponseOverallScoreMax).optional(),
-  "category_scores": zod.object({
-  "experience": zod.int().optional(),
-  "skills": zod.int().optional(),
-  "formatting": zod.int().optional(),
-  "relevance": zod.int().optional()
-}),
+  "category_scores": zod.record(zod.string(), zod.int()),
   "missing_keywords": zod.array(zod.string()).describe('List of missing keywords from the job description.'),
-  "bullet_critiques": zod.array(zod.string()).describe('Actionable feedback for resume bullet points.'),
-  "status": zod.enum(['PENDING', 'FAILED', 'DONE']).optional().describe('* `PENDING` - Pending\n* `FAILED` - Failed\n* `DONE` - Done'),
+  "section_critiques": zod.array(zod.object({
+  "section": zod.string().describe('Resume section (e.g., Experience, Projects, Certifications, Skills, Education).'),
+  "target_item": zod.string().describe('Specific role, project, credential, or area being critiqued.'),
+  "critique": zod.string().describe('Actionable feedback tailored to the target industry.'),
+  "suggested_rewrite": zod.string().describe('Action-oriented, quantified rewrite suggestion.')
+})).describe('Section-by-section actionable feedback across the resume.'),
+  "status": zod.enum(['PENDING', 'PROCESSING', 'FAILED', 'DONE']).optional().describe('* `PENDING` - Pending\n* `PROCESSING` - Processing\n* `FAILED` - Failed\n* `DONE` - Done'),
   "created_at": zod.iso.datetime({"offset":true})
 })
 

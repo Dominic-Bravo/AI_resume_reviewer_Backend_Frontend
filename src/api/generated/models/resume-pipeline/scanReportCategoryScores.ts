@@ -4,9 +4,4 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export type ScanReportCategoryScores = {
-  readonly experience?: number;
-  readonly skills?: number;
-  readonly formatting?: number;
-  readonly relevance?: number;
-};
+export type ScanReportCategoryScores = {[key: string]: number};
