@@ -1,55 +1,74 @@
 "use client";
 
-import { useState } from "react";
+import { useGoogleLogin } from "@react-oauth/google";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useV1UsersAuthGoogleCreate } from "@/api/generated/endpoints/authentication/authentication";
+import { setAccessToken } from "@/api/axios-instance";
 import { Button } from "@/components/ui/button";
 
 interface GoogleAuthButtonProps {
   mode?: "login" | "signup";
   disabled?: boolean;
-  onGoogleAuth?: () => Promise<void> | void;
 }
 
 export function GoogleAuthButton({
   mode = "login",
   disabled = false,
-  onGoogleAuth,
 }: GoogleAuthButtonProps) {
-  const [isRedirecting, setIsRedirecting] = useState(false);
-
+  const router = useRouter();
   const label =
     mode === "login" ? "Continue with Google" : "Sign up with Google";
 
-  const handleClick = async () => {
-    try {
-      setIsRedirecting(true);
+  const { mutate: googleAuth, isPending } = useV1UsersAuthGoogleCreate({
+    mutation: {
+      onSuccess: (response) => {
+        // Capture the access token returned from your Django backend
+        const token =
+          (response as unknown as { access?: string; access_token?: string })
+            ?.access ||
+          (response as unknown as { access_token?: string })?.access_token;
 
-      if (onGoogleAuth) {
-        await onGoogleAuth();
-        return;
-      }
+        if (token) {
+          setAccessToken(token);
+          toast.success("Successfully logged in with Google!");
+          router.push("/dashboard");
+        } else {
+          toast.error(
+            "Authentication succeeded, but no access token was returned.",
+          );
+        }
+      },
+      onError: () => {
+        toast.error("Google authentication failed. Please try again.");
+      },
+    },
+  });
 
-      // Placeholder until your Django Google OAuth endpoint is ready
-      // Later, replace or pass `onGoogleAuth` to redirect to:
-      // window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/google/login/`;
-      toast.info("Google OAuth backend endpoint coming soon.");
-    } catch {
-      toast.error("Unable to connect to Google authentication.");
-    } finally {
-      setIsRedirecting(false);
-    }
-  };
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      // Send the access_token or code to your backend endpoint
+      googleAuth({
+        data: {
+          access_token: tokenResponse.access_token,
+        },
+      });
+    },
+    onError: () => {
+      toast.error("Google popup closed or authorization failed.");
+    },
+  });
 
   return (
     <Button
       type="button"
       variant="outline"
       className="w-full"
-      disabled={disabled || isRedirecting}
-      onClick={handleClick}
+      disabled={disabled || isPending}
+      onClick={() => loginWithGoogle()}
     >
-      {isRedirecting ? (
+      {isPending ? (
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       ) : (
         <svg className="mr-2 h-4 w-4" aria-hidden="true" viewBox="0 0 24 24">
