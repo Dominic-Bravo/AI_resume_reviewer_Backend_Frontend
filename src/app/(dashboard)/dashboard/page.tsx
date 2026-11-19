@@ -93,26 +93,18 @@ export default function DashboardPage() {
             keyword gaps and bullet improvements.
           </p>
         </div>
-        <Button
-          variant="outline"
-          nativeButton={false}
-          render={<Link href="/history" />}
-        >
-          <History className="mr-2 h-4 w-4" />
-          Scan History
-        </Button>
-      </div>
-      <div className="flex items-center gap-2.5">
-        <CreditsBadge />
+        <div className="flex items-center gap-2.5">
+          <CreditsBadge />
 
-        <Button
-          variant="outline"
-          nativeButton={false}
-          render={<Link href="/history" />}
-        >
-          <History className="mr-2 h-4 w-4" />
-          Scan History
-        </Button>
+          <Button
+            variant="outline"
+            nativeButton={false}
+            render={<Link href="/history" />}
+          >
+            <History className="mr-2 h-4 w-4" />
+            Scan History
+          </Button>
+        </div>
       </div>
 
       <Card>
