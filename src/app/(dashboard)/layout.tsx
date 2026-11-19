@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { FileText, LogOut, Sparkles } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   getAccessToken,
   setAccessToken,
   AXIOS_INSTANCE,
 } from "@/api/axios-instance";
-import { Button } from "@/components/ui/button";
+import { useV1LogoutCreate } from "@/api/generated/endpoints/authentication/authentication";
+import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar";
 
 export default function DashboardLayout({
   children,
@@ -19,69 +19,65 @@ export default function DashboardLayout({
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
 
+  const { mutate: logoutRequest, isPending: isLoggingOut } =
+    useV1LogoutCreate();
+
   useEffect(() => {
+    let cancelled = false;
+
     const restoreSession = async () => {
       if (getAccessToken()) {
-        setIsReady(true);
+        if (!cancelled) setIsReady(true);
         return;
       }
+
       try {
-        const { data } = await AXIOS_INSTANCE.post<{ access: string }>(
+        const { data } = await AXIOS_INSTANCE.post<{ access?: string }>(
           "/api/v1/token/refresh/",
         );
-        setAccessToken(data.access);
-        setAccessToken(data.access);
-        setIsReady(true);
+        if (cancelled) return;
+
+        if (data?.access) {
+          setAccessToken(data.access);
+          setIsReady(true);
+        } else {
+          router.replace("/login");
+        }
       } catch {
-        router.replace("/login");
+        if (!cancelled) {
+          router.replace("/login");
+        }
       }
     };
 
     restoreSession();
+
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   const handleLogout = () => {
     setAccessToken(null);
-    router.push("/login");
+    logoutRequest(undefined, {
+      onSettled: () => {
+        router.replace("/login");
+      },
+    });
   };
 
   if (!isReady) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
-        Verifying session...
+      <div className="flex min-h-screen flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin text-primary" />
+        <span>Verifying session...</span>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 font-semibold"
-          >
-            <Sparkles className="h-5 w-5 text-primary" />
-            <span>ResumeAI</span>
-          </Link>
-
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              render={<Link href="/dashboard" />}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              New Scan
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign out
-            </Button>
-          </div>
-        </div>
-      </header>
-
+      <DashboardNavbar onLogout={handleLogout} isLoggingOut={isLoggingOut} />
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
     </div>
   );

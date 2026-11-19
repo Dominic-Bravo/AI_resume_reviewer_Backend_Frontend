@@ -1,21 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import {
-  FileText,
-  ArrowRight,
-  Loader2,
-  AlertCircle,
-  PlusCircle,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  Sparkles,
-} from "lucide-react";
+import { FileText, Loader2, AlertCircle, PlusCircle } from "lucide-react";
 
 import { useV1ScansHistoryList } from "@/api/generated/endpoints/resume-pipeline/resume-pipeline";
+import { ResumeHistoryCard } from "@/components/history/resume-history-card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -35,35 +25,6 @@ function formatDate(isoDate?: string) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(parsed);
-}
-
-function StatusBadge({ status }: { status?: string }) {
-  switch (status) {
-    case "DONE":
-      return (
-        <Badge variant="secondary" className="gap-1">
-          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-          Completed
-        </Badge>
-      );
-    case "PROCESSING":
-    case "PENDING":
-      return (
-        <Badge variant="outline" className="gap-1">
-          <Clock className="h-3.5 w-3.5 animate-pulse text-amber-500" />
-          {status === "PROCESSING" ? "Processing" : "Pending"}
-        </Badge>
-      );
-    case "FAILED":
-      return (
-        <Badge variant="destructive" className="gap-1">
-          <XCircle className="h-3.5 w-3.5" />
-          Failed
-        </Badge>
-      );
-    default:
-      return <Badge variant="outline">{status || "Unknown"}</Badge>;
-  }
 }
 
 export default function ScanHistoryPage() {
@@ -149,81 +110,13 @@ export default function ScanHistoryPage() {
         </Card>
       ) : (
         <div className="space-y-6">
-          {resumes.map((resume) => {
-            const reports = Array.isArray(resume.scan_reports)
-              ? resume.scan_reports
-              : [];
-
-            return (
-              <Card key={resume.id}>
-                <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 border-b bg-muted/20">
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5 text-primary" />
-                    <div>
-                      <CardTitle className="text-base">
-                        {resume.file_name}
-                      </CardTitle>
-                      <CardDescription>
-                        Uploaded {formatDate(resume.created_at)}
-                      </CardDescription>
-                    </div>
-                  </div>
-                  <Badge variant="outline">
-                    {reports.length} {reports.length === 1 ? "Scan" : "Scans"}
-                  </Badge>
-                </CardHeader>
-
-                <CardContent className="pt-4">
-                  {reports.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      No scan reports associated with this file yet.
-                    </p>
-                  ) : (
-                    <div className="divide-y">
-                      {reports.map((report) => (
-                        <div
-                          key={report.id}
-                          className="flex flex-wrap items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
-                        >
-                          <div className="space-y-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="font-medium">
-                                {report.target_job_title ||
-                                  "General Resume Scan"}
-                              </span>
-                              <StatusBadge status={report.status} />
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              Scanned {formatDate(report.created_at)}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center gap-4">
-                            {typeof report.overall_score === "number" && (
-                              <div className="flex items-center gap-1.5 rounded-md border bg-muted/40 px-2.5 py-1 text-sm font-semibold">
-                                <Sparkles className="h-3.5 w-3.5 text-primary" />
-                                {report.overall_score}%
-                              </div>
-                            )}
-
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              nativeButton={false}
-                              render={<Link href={`/results/${report.id}`} />}
-                            >
-                              View Report
-                              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
+          {resumes.map((resume) => (
+            <ResumeHistoryCard
+              key={resume.id}
+              resume={resume}
+              formatDate={formatDate}
+            />
+          ))}
         </div>
       )}
     </div>
