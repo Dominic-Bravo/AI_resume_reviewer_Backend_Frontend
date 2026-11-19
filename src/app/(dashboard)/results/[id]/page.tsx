@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { useV1UsersApiV1ScansRetrieve } from "@/api/generated/endpoints/resume-pipeline/resume-pipeline";
+import { useV1ScansRetrieve } from "@/api/generated/endpoints/resume-pipeline/resume-pipeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -39,7 +39,7 @@ export default function ScanResultsPage() {
     isLoading,
     isError,
     refetch,
-  } = useV1UsersApiV1ScansRetrieve(scanId, {
+  } = useV1ScansRetrieve(scanId, {
     query: {
       refetchInterval: (query) => {
         const data = query.state.data;

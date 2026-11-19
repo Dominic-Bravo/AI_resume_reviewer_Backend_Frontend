@@ -6,7 +6,7 @@ import { UploadCloud, FileCheck2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
-import { useV1UsersApiV1UploadResumeCreate } from "@/api/generated/endpoints/resume-pipeline/resume-pipeline";
+import { useV1UploadResumeCreate } from "@/api/generated/endpoints/resume-pipeline/resume-pipeline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,31 +25,29 @@ export default function DashboardPage() {
   const [jobTitle, setJobTitle] = useState("");
   const [jobDesc, setJobDesc] = useState("");
 
-  const { mutate: uploadResume, isPending } = useV1UsersApiV1UploadResumeCreate(
-    {
-      mutation: {
-        onSuccess: (response) => {
-          // Check for scan id returned in the response payload
-          const scanId =
-            (response as unknown as { id?: string; scan_id?: string })?.id ||
-            (response as unknown as { scan_id?: string })?.scan_id;
+  const { mutate: uploadResume, isPending } = useV1UploadResumeCreate({
+    mutation: {
+      onSuccess: (response) => {
+        // Check for scan id returned in the response payload
+        const scanId =
+          (response as unknown as { id?: string; scan_id?: string })?.id ||
+          (response as unknown as { scan_id?: string })?.scan_id;
 
-          toast.success("Resume uploaded! Running AI analysis...");
-          if (scanId) {
-            router.push(`/results/${scanId}`);
-          }
-        },
-        onError: (error) => {
-          const err = error as AxiosError<{ detail?: string; file?: string[] }>;
-          const msg =
-            err.response?.data?.file?.[0] ||
-            err.response?.data?.detail ||
-            "Failed to upload resume. Please check your file format and credits.";
-          toast.error(msg);
-        },
+        toast.success("Resume uploaded! Running AI analysis...");
+        if (scanId) {
+          router.push(`/results/${scanId}`);
+        }
+      },
+      onError: (error) => {
+        const err = error as AxiosError<{ detail?: string; file?: string[] }>;
+        const msg =
+          err.response?.data?.file?.[0] ||
+          err.response?.data?.detail ||
+          "Failed to upload resume. Please check your file format and credits.";
+        toast.error(msg);
       },
     },
-  );
+  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
