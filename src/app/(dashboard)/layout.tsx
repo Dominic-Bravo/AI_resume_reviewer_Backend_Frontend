@@ -27,8 +27,9 @@ export default function DashboardLayout({
       }
       try {
         const { data } = await AXIOS_INSTANCE.post<{ access: string }>(
-          "/api/v1/users/token/refresh/",
+          "/api/v1/token/refresh/",
         );
+        setAccessToken(data.access);
         setAccessToken(data.access);
         setIsReady(true);
       } catch {

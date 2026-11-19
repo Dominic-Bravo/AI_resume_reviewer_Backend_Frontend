@@ -4,7 +4,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useV1UsersAuthGoogleCreate } from "@/api/generated/endpoints/authentication/authentication";
+import { useV1AuthGoogleCreate } from "@/api/generated/endpoints/authentication/authentication";
 import { setAccessToken } from "@/api/axios-instance";
 import { Button } from "@/components/ui/button";
 
@@ -21,7 +21,7 @@ export function GoogleAuthButton({
   const label =
     mode === "login" ? "Continue with Google" : "Sign up with Google";
 
-  const { mutate: googleAuth, isPending } = useV1UsersAuthGoogleCreate({
+  const { mutate: googleAuth, isPending } = useV1AuthGoogleCreate({
     mutation: {
       onSuccess: (response) => {
         // Capture the access token returned from your Django backend

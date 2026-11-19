@@ -73,8 +73,9 @@ AXIOS_INSTANCE.interceptors.response.use(
       isRefreshing = true;
 
       try {
+        // Inside your 401 interceptor in src/api/axios-instance.ts:
         const { data } = await AXIOS_INSTANCE.post<{ access: string }>(
-          "/api/v1/users/token/refresh/",
+          "/api/v1/token/refresh/",
         );
         setAccessToken(data.access);
         processQueue(null, data.access);
