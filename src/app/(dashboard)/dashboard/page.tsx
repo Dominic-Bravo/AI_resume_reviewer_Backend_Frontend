@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { UploadCloud, FileCheck2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
-
+import Link from "next/link";
+import { UploadCloud, FileCheck2, Loader2, History } from "lucide-react";
 import { useV1UploadResumeCreate } from "@/api/generated/endpoints/resume-pipeline/resume-pipeline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,6 +88,26 @@ export default function DashboardPage() {
           Upload your resume and paste a target job description to uncover
           keyword gaps and bullet improvements.
         </p>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">
+            AI Resume Scanner
+          </h1>
+          <p className="text-muted-foreground">
+            Upload your resume and paste a target job description to uncover
+            keyword gaps and bullet improvements.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link href="/history" />}
+        >
+          <History className="mr-2 h-4 w-4" />
+          Scan History
+        </Button>
       </div>
 
       <Card>
