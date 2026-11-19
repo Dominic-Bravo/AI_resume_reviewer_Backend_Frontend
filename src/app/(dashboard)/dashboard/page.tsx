@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import Link from "next/link";
 import { UploadCloud, FileCheck2, Loader2, History } from "lucide-react";
+import { CreditsBadge } from "@/components/dashboard/credits-badge";
 import { useV1UploadResumeCreate } from "@/api/generated/endpoints/resume-pipeline/resume-pipeline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,6 +93,18 @@ export default function DashboardPage() {
             keyword gaps and bullet improvements.
           </p>
         </div>
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link href="/history" />}
+        >
+          <History className="mr-2 h-4 w-4" />
+          Scan History
+        </Button>
+      </div>
+      <div className="flex items-center gap-2.5">
+        <CreditsBadge />
+
         <Button
           variant="outline"
           nativeButton={false}
