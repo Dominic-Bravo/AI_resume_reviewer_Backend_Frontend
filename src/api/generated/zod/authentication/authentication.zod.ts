@@ -10,17 +10,33 @@ import * as zod from 'zod';
  * Accepts Google OAuth code/token and authenticates or registers user.
  * @summary Google OAuth2 Login
  */
-export const V1UsersAuthGoogleCreateBody = zod.object({
+export const V1AuthGoogleCreateBody = zod.object({
   "access_token": zod.string().optional(),
   "code": zod.string().optional(),
   "id_token": zod.string().optional()
 })
 
-export const V1UsersAuthGoogleCreateResponse = zod.object({
+export const V1AuthGoogleCreateResponse = zod.object({
   "access_token": zod.string().optional(),
   "code": zod.string().optional(),
   "id_token": zod.string().optional()
 })
+
+/**
+ * @summary Get current user's credit balance
+ */
+export const v1CreditsRetrieveResponseCreditsMin = -2147483648;
+export const v1CreditsRetrieveResponseCreditsMax = 2147483647;
+
+
+
+export const V1CreditsRetrieveResponse = zod.object({
+  "id": zod.uuid(),
+  "email": zod.email(),
+  "username": zod.string(),
+  "credits": zod.int().min(v1CreditsRetrieveResponseCreditsMin).max(v1CreditsRetrieveResponseCreditsMax).optional(),
+  "created_at": zod.iso.datetime({"offset":true})
+}).describe('Serializer for fetching the authenticated user\'s profile.')
 
 /**
  * Validates credentials, returns an access token, and sets the HttpOnly refresh cookie.
@@ -39,7 +55,7 @@ export const AuthLoginResponse = zod.object({
 /**
  * @summary Logout User
  */
-export const V1UsersLogoutCreateResponse = zod.unknown()
+export const V1LogoutCreateResponse = zod.unknown()
 
 /**
  * Creates a new user account, returns an access token, and sets the HttpOnly refresh cookie.

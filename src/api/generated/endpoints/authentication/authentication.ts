@@ -4,13 +4,22 @@
  * OpenAPI spec version: 0.0.0
  */
 import {
-  useMutation
+  useMutation,
+  useQuery
 } from '@tanstack/react-query';
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
   QueryClient,
+  QueryFunction,
+  QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
-  UseMutationResult
+  UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
@@ -24,6 +33,10 @@ import type {
 import type {
   SocialLogin
 } from '../../models/authentication/socialLogin';
+
+import type {
+  UserMe
+} from '../../models/authentication/userMe';
 
 import { customInstance } from '../../../axios-instance';
 
@@ -59,18 +72,33 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
+const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
+  const result = { queryKey } as T & { queryKey: K };
+  for (const key of Object.keys(query)) {
+    // The explicit queryKey always wins, matching the previous
+    // `{ ...query, queryKey }` spread where it was set last.
+    if (key === 'queryKey') continue;
+    Object.defineProperty(result, key, {
+      enumerable: true,
+      configurable: true,
+      get: () => (query as Record<string, unknown>)[key],
+    });
+  }
+  return result;
+};
+
 /**
  * Accepts Google OAuth code/token and authenticates or registers user.
  * @summary Google OAuth2 Login
  */
-export const v1UsersAuthGoogleCreate = (
+export const v1AuthGoogleCreate = (
     socialLogin?: SocialLogin,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
 
 
       return customInstance<SocialLogin>(
-      {url: `/api/v1/users/auth/google/`, method: 'POST',
+      {url: `/api/v1/auth/google/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: socialLogin, signal
     },
@@ -80,13 +108,13 @@ export const v1UsersAuthGoogleCreate = (
 
 
 
-export const getV1UsersAuthGoogleCreateMutationKey = () => ['v1UsersAuthGoogleCreate'] as const;
+export const getV1AuthGoogleCreateMutationKey = () => ['v1AuthGoogleCreate'] as const;
 
-export const getV1UsersAuthGoogleCreateMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>, TError,V1UsersAuthGoogleCreateMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>, TError,V1UsersAuthGoogleCreateMutationVariables, TContext> => {
+export const getV1AuthGoogleCreateMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1AuthGoogleCreate>>, TError,V1AuthGoogleCreateMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof v1AuthGoogleCreate>>, TError,V1AuthGoogleCreateMutationVariables, TContext> => {
 
-const mutationKey = getV1UsersAuthGoogleCreateMutationKey();
+const mutationKey = getV1AuthGoogleCreateMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -96,10 +124,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>, V1UsersAuthGoogleCreateMutationVariables> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof v1AuthGoogleCreate>>, V1AuthGoogleCreateMutationVariables> = (props) => {
           const {data} = props ?? {};
 
-          return  v1UsersAuthGoogleCreate(data,requestOptions)
+          return  v1AuthGoogleCreate(data,requestOptions)
         }
 
 
@@ -109,26 +137,118 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type V1UsersAuthGoogleCreateMutationResult = NonNullable<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>>
-    export type V1UsersAuthGoogleCreateMutationBody = SocialLogin | undefined
-    export type V1UsersAuthGoogleCreateMutationError = unknown
-    export type V1UsersAuthGoogleCreateMutationVariables = {data?: SocialLogin}
+    export type V1AuthGoogleCreateMutationResult = NonNullable<Awaited<ReturnType<typeof v1AuthGoogleCreate>>>
+    export type V1AuthGoogleCreateMutationBody = SocialLogin | undefined
+    export type V1AuthGoogleCreateMutationError = unknown
+    export type V1AuthGoogleCreateMutationVariables = {data?: SocialLogin}
 
     /**
  * Accepts Google OAuth code/token and authenticates or registers user.
  * @summary Google OAuth2 Login
  */
-export const useV1UsersAuthGoogleCreate = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>, TError,V1UsersAuthGoogleCreateMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+export const useV1AuthGoogleCreate = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1AuthGoogleCreate>>, TError,V1AuthGoogleCreateMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof v1UsersAuthGoogleCreate>>,
+        Awaited<ReturnType<typeof v1AuthGoogleCreate>>,
         TError,
-        V1UsersAuthGoogleCreateMutationVariables,
+        V1AuthGoogleCreateMutationVariables,
         TContext
       > => {
-      return useMutation(getV1UsersAuthGoogleCreateMutationOptions(options), queryClient);
+      return useMutation(getV1AuthGoogleCreateMutationOptions(options), queryClient);
     }
     /**
+ * @summary Get current user's credit balance
+ */
+export const v1CreditsRetrieve = (
+
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<UserMe>(
+      {url: `/api/v1/credits/`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getV1CreditsRetrieveQueryKey = () => {
+    return [
+    `/api/v1/credits/`
+    ] as const;
+    }
+
+
+export const getV1CreditsRetrieveQueryOptions = <TData = Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getV1CreditsRetrieveQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof v1CreditsRetrieve>>> = ({ signal }) => v1CreditsRetrieve(requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type V1CreditsRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof v1CreditsRetrieve>>>
+export type V1CreditsRetrieveQueryError = unknown
+
+
+/** @summary Get current user's credit balance */
+export function useV1CreditsRetrieve<TData = Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof v1CreditsRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof v1CreditsRetrieve>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/** @summary Get current user's credit balance */
+export function useV1CreditsRetrieve<TData = Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof v1CreditsRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof v1CreditsRetrieve>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/** @summary Get current user's credit balance */
+export function useV1CreditsRetrieve<TData = Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/** @summary Get current user's credit balance */
+export function useV1CreditsRetrieve<TData = Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof v1CreditsRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getV1CreditsRetrieveQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
  * Validates credentials, returns an access token, and sets the HttpOnly refresh cookie.
  * @summary Authenticate user and login
  */
@@ -139,7 +259,7 @@ export const authLogin = (
 
 
       return customInstance<Login>(
-      {url: `/api/v1/users/login/`, method: 'POST',
+      {url: `/api/v1/login/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: login, signal
     },
@@ -200,14 +320,14 @@ export const useAuthLogin = <TError = unknown,
     /**
  * @summary Logout User
  */
-export const v1UsersLogoutCreate = (
+export const v1LogoutCreate = (
 
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
 
 
       return customInstance<void>(
-      {url: `/api/v1/users/logout/`, method: 'POST', signal
+      {url: `/api/v1/logout/`, method: 'POST', signal
     },
       options);
     }
@@ -215,13 +335,13 @@ export const v1UsersLogoutCreate = (
 
 
 
-export const getV1UsersLogoutCreateMutationKey = () => ['v1UsersLogoutCreate'] as const;
+export const getV1LogoutCreateMutationKey = () => ['v1LogoutCreate'] as const;
 
-export const getV1UsersLogoutCreateMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1UsersLogoutCreate>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof v1UsersLogoutCreate>>, TError,void, TContext> => {
+export const getV1LogoutCreateMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1LogoutCreate>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof v1LogoutCreate>>, TError,void, TContext> => {
 
-const mutationKey = getV1UsersLogoutCreateMutationKey();
+const mutationKey = getV1LogoutCreateMutationKey();
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -231,10 +351,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof v1UsersLogoutCreate>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof v1LogoutCreate>>, void> = () => {
 
 
-          return  v1UsersLogoutCreate(requestOptions)
+          return  v1LogoutCreate(requestOptions)
         }
 
 
@@ -244,21 +364,21 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type V1UsersLogoutCreateMutationResult = NonNullable<Awaited<ReturnType<typeof v1UsersLogoutCreate>>>
+    export type V1LogoutCreateMutationResult = NonNullable<Awaited<ReturnType<typeof v1LogoutCreate>>>
 
-    export type V1UsersLogoutCreateMutationError = unknown
+    export type V1LogoutCreateMutationError = unknown
 
 
     /** @summary Logout User */
-export const useV1UsersLogoutCreate = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1UsersLogoutCreate>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+export const useV1LogoutCreate = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof v1LogoutCreate>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof v1UsersLogoutCreate>>,
+        Awaited<ReturnType<typeof v1LogoutCreate>>,
         TError,
         void,
         TContext
       > => {
-      return useMutation(getV1UsersLogoutCreateMutationOptions(options), queryClient);
+      return useMutation(getV1LogoutCreateMutationOptions(options), queryClient);
     }
     /**
  * Creates a new user account, returns an access token, and sets the HttpOnly refresh cookie.
@@ -271,7 +391,7 @@ export const authRegister = (
 
 
       return customInstance<Register>(
-      {url: `/api/v1/users/register/`, method: 'POST',
+      {url: `/api/v1/register/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: register, signal
     },
@@ -340,7 +460,7 @@ export const authTokenRefresh = (
 
 
       return customInstance<void>(
-      {url: `/api/v1/users/token/refresh/`, method: 'POST', signal
+      {url: `/api/v1/token/refresh/`, method: 'POST', signal
     },
       options);
     }

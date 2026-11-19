@@ -10,23 +10,23 @@ import * as zod from 'zod';
  * Retrieves the AI analysis status and results for a given scan report ID.
  * @summary Get Scan Report Results
  */
-export const V1UsersApiV1ScansRetrieveParams = zod.object({
+export const V1ScansRetrieveParams = zod.object({
   "scan_id": zod.uuid()
 })
 
-export const v1UsersApiV1ScansRetrieveResponseTargetJobTitleMax = 255;
+export const v1ScansRetrieveResponseTargetJobTitleMax = 255;
 
-export const v1UsersApiV1ScansRetrieveResponseOverallScoreMin = -2147483648;
-export const v1UsersApiV1ScansRetrieveResponseOverallScoreMax = 2147483647;
+export const v1ScansRetrieveResponseOverallScoreMin = -2147483648;
+export const v1ScansRetrieveResponseOverallScoreMax = 2147483647;
 
 
 
-export const V1UsersApiV1ScansRetrieveResponse = zod.object({
+export const V1ScansRetrieveResponse = zod.object({
   "id": zod.uuid(),
   "file_name": zod.string(),
-  "target_job_title": zod.string().max(v1UsersApiV1ScansRetrieveResponseTargetJobTitleMax).nullish(),
+  "target_job_title": zod.string().max(v1ScansRetrieveResponseTargetJobTitleMax).nullish(),
   "target_job_desc": zod.string().nullish(),
-  "overall_score": zod.int().min(v1UsersApiV1ScansRetrieveResponseOverallScoreMin).max(v1UsersApiV1ScansRetrieveResponseOverallScoreMax).optional(),
+  "overall_score": zod.int().min(v1ScansRetrieveResponseOverallScoreMin).max(v1ScansRetrieveResponseOverallScoreMax).optional(),
   "category_scores": zod.record(zod.string(), zod.int()),
   "missing_keywords": zod.array(zod.string()).describe('List of missing keywords from the job description.'),
   "section_critiques": zod.array(zod.object({
@@ -40,43 +40,28 @@ export const V1UsersApiV1ScansRetrieveResponse = zod.object({
 })
 
 /**
- * @summary Upload and Scan Resume
- */
-export const V1UsersApiV1UploadResumeCreateBody = zod.object({
-  "file": zod.instanceof(Blob),
-  "target_job_title": zod.string().optional().describe('Optional target job title'),
-  "target_job_desc": zod.string().optional().describe('Optional target job description')
-})
-
-export const V1UsersApiV1UploadResumeCreateResponse = zod.object({
-  "file": zod.url().describe('PDF or DOCX resume file'),
-  "target_job_title": zod.string().optional().describe('Optional target job title'),
-  "target_job_desc": zod.string().optional().describe('Optional target job description')
-})
-
-/**
  * Retrieves a list of resumes and their scan history for the authenticated user.
  * @summary Get User Scan History
  */
-export const v1UsersScansHistoryListResponseFileNameMax = 255;
+export const v1ScansHistoryListResponseFileNameMax = 255;
 
-export const v1UsersScansHistoryListResponseScanReportsItemTargetJobTitleMax = 255;
+export const v1ScansHistoryListResponseScanReportsItemTargetJobTitleMax = 255;
 
-export const v1UsersScansHistoryListResponseScanReportsItemOverallScoreMin = -2147483648;
-export const v1UsersScansHistoryListResponseScanReportsItemOverallScoreMax = 2147483647;
+export const v1ScansHistoryListResponseScanReportsItemOverallScoreMin = -2147483648;
+export const v1ScansHistoryListResponseScanReportsItemOverallScoreMax = 2147483647;
 
 
 
-export const V1UsersScansHistoryListResponseItem = zod.object({
+export const V1ScansHistoryListResponseItem = zod.object({
   "id": zod.uuid(),
-  "file_name": zod.string().max(v1UsersScansHistoryListResponseFileNameMax),
+  "file_name": zod.string().max(v1ScansHistoryListResponseFileNameMax),
   "created_at": zod.iso.datetime({"offset":true}),
   "scan_reports": zod.array(zod.object({
   "id": zod.uuid(),
   "file_name": zod.string(),
-  "target_job_title": zod.string().max(v1UsersScansHistoryListResponseScanReportsItemTargetJobTitleMax).nullish(),
+  "target_job_title": zod.string().max(v1ScansHistoryListResponseScanReportsItemTargetJobTitleMax).nullish(),
   "target_job_desc": zod.string().nullish(),
-  "overall_score": zod.int().min(v1UsersScansHistoryListResponseScanReportsItemOverallScoreMin).max(v1UsersScansHistoryListResponseScanReportsItemOverallScoreMax).optional(),
+  "overall_score": zod.int().min(v1ScansHistoryListResponseScanReportsItemOverallScoreMin).max(v1ScansHistoryListResponseScanReportsItemOverallScoreMax).optional(),
   "category_scores": zod.record(zod.string(), zod.int()),
   "missing_keywords": zod.array(zod.string()).describe('List of missing keywords from the job description.'),
   "section_critiques": zod.array(zod.object({
@@ -89,5 +74,20 @@ export const V1UsersScansHistoryListResponseItem = zod.object({
   "created_at": zod.iso.datetime({"offset":true})
 }))
 })
-export const V1UsersScansHistoryListResponse = zod.array(V1UsersScansHistoryListResponseItem)
+export const V1ScansHistoryListResponse = zod.array(V1ScansHistoryListResponseItem)
+
+/**
+ * @summary Upload and Scan Resume
+ */
+export const V1UploadResumeCreateBody = zod.object({
+  "file": zod.instanceof(Blob),
+  "target_job_title": zod.string().optional().describe('Optional target job title'),
+  "target_job_desc": zod.string().optional().describe('Optional target job description')
+})
+
+export const V1UploadResumeCreateResponse = zod.object({
+  "file": zod.url().describe('PDF or DOCX resume file'),
+  "target_job_title": zod.string().optional().describe('Optional target job title'),
+  "target_job_desc": zod.string().optional().describe('Optional target job description')
+})
 
