@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardFooter } from "@/components/ui/card";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SignupSchema = AuthRegisterBody.refine(
   (data) => data.password === data.password_confirm,
@@ -31,6 +32,7 @@ type SignupFormValues = z.infer<typeof SignupSchema>;
 
 export function SignupForm() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -43,8 +45,15 @@ export function SignupForm() {
   const { mutate: registerUser, isPending } = useAuthRegister({
     mutation: {
       onSuccess: (response) => {
-        const token = (response as unknown as { access?: string })?.access;
-        if (token) setAccessToken(token);
+        const payload = response as unknown as {
+          access?: string;
+          tokens?: { access?: string };
+        };
+        const token = payload?.access || payload?.tokens?.access;
+
+        if (token) {
+          setAccessToken(token);
+        }
 
         toast.success("Account created! Welcome aboard.");
         router.push("/dashboard");

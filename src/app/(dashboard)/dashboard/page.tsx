@@ -1,11 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { History } from "lucide-react";
-
-import { CreditsBadge } from "@/components/dashboard/credits-badge";
 import { ResumeUploadForm } from "@/components/dashboard/resume-upload-form";
-import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   return (
@@ -20,8 +15,6 @@ export default function DashboardPage() {
             keyword gaps and bullet improvements.
           </p>
         </div>
-
-        
       </div>
 
       <ResumeUploadForm />

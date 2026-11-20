@@ -2,14 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   getAccessToken,
   setAccessToken,
-  AXIOS_INSTANCE,
+  refreshAccessToken,
 } from "@/api/axios-instance";
 import { useV1LogoutCreate } from "@/api/generated/endpoints/authentication/authentication";
 import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar";
+
+async function tryRestoreSession(): Promise<boolean> {
+  if (getAccessToken()) {
+    return true;
+  }
+
+  try {
+    const token = await refreshAccessToken();
+    return Boolean(token);
+  } catch {
+    return false;
+  }
+}
 
 export default function DashboardLayout({
   children,
@@ -17,6 +32,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isReady, setIsReady] = useState(false);
 
   const { mutate: logoutRequest, isPending: isLoggingOut } =
@@ -25,32 +41,14 @@ export default function DashboardLayout({
   useEffect(() => {
     let cancelled = false;
 
-    const restoreSession = async () => {
-      if (getAccessToken()) {
-        if (!cancelled) setIsReady(true);
-        return;
+    tryRestoreSession().then((restored) => {
+      if (cancelled) return;
+      if (restored) {
+        setIsReady(true);
+      } else {
+        router.replace("/login");
       }
-
-      try {
-        const { data } = await AXIOS_INSTANCE.post<{ access?: string }>(
-          "/api/v1/token/refresh/",
-        );
-        if (cancelled) return;
-
-        if (data?.access) {
-          setAccessToken(data.access);
-          setIsReady(true);
-        } else {
-          router.replace("/login");
-        }
-      } catch {
-        if (!cancelled) {
-          router.replace("/login");
-        }
-      }
-    };
-
-    restoreSession();
+    });
 
     return () => {
       cancelled = true;
@@ -58,9 +56,11 @@ export default function DashboardLayout({
   }, [router]);
 
   const handleLogout = () => {
-    setAccessToken(null);
     logoutRequest(undefined, {
       onSettled: () => {
+        setAccessToken(null);
+        queryClient.clear();
+        toast.success("Signed out successfully.");
         router.replace("/login");
       },
     });

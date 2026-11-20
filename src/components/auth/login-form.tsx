@@ -18,14 +18,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardFooter } from "@/components/ui/card";
+import { useQueryClient } from "@tanstack/react-query";
 
 type LoginFormValues = z.infer<typeof AuthLoginBody>;
 
 export function LoginForm() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
-    register,
+    register, 
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>({
@@ -35,11 +37,19 @@ export function LoginForm() {
   const { mutate: login, isPending } = useAuthLogin({
     mutation: {
       onSuccess: (response) => {
-        const token = (response as unknown as { access?: string })?.access;
-        if (token) setAccessToken(token);
+        const payload = response as unknown as {
+          access?: string;
+          tokens?: { access?: string };
+        };
+        const token = payload?.access || payload?.tokens?.access;
 
+        if (token) {
+          setAccessToken(token);
+        }
+
+        queryClient.clear();
         toast.success("Welcome back!");
-        router.push("/dashboard");
+        router.replace("/dashboard");
       },
       onError: (error) => {
         const err = error as AxiosError<{ detail?: string }>;

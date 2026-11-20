@@ -32,7 +32,30 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <GoogleOAuthProvider clientId={googleClientId}>
           <QueryProvider>
             {children}
-            <Toaster richColors position="top-right" />
+            <Toaster  
+          position="top-center"
+          richColors={false}
+          toastOptions={{
+            classNames: {
+              toast:
+                "group flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-card-foreground shadow-lg",
+              title: "font-semibold text-foreground",
+              description: "text-xs text-muted-foreground",
+              success:
+                "border-emerald-500/30 bg-card text-foreground [&_[data-icon]]:text-emerald-500",
+              error:
+                "border-destructive/40 bg-card text-foreground [&_[data-icon]]:text-destructive",
+              warning:
+                "border-amber-500/40 bg-card text-foreground [&_[data-icon]]:text-amber-500",
+              info:
+                "border-primary/40 bg-card text-foreground [&_[data-icon]]:text-primary",
+              actionButton:
+                "rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground",
+              cancelButton:
+                "rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground",
+            },
+          }}
+        />
           </QueryProvider>
         </GoogleOAuthProvider>
       </body>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useGoogleLogin } from "@react-oauth/google";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -13,27 +14,35 @@ interface GoogleAuthButtonProps {
   disabled?: boolean;
 }
 
+type AuthResponseShape = {
+  access?: string;
+  access_token?: string;
+  tokens?: { access?: string };
+};
+
 export function GoogleAuthButton({
   mode = "login",
   disabled = false,
 }: GoogleAuthButtonProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const label =
     mode === "login" ? "Continue with Google" : "Sign up with Google";
 
   const { mutate: googleAuth, isPending } = useV1AuthGoogleCreate({
     mutation: {
       onSuccess: (response) => {
-        // Capture the access token returned from your Django backend
+        const payload = response as unknown as AuthResponseShape;
         const token =
-          (response as unknown as { access?: string; access_token?: string })
-            ?.access ||
-          (response as unknown as { access_token?: string })?.access_token;
+          payload?.access ||
+          payload?.access_token ||
+          payload?.tokens?.access;
 
         if (token) {
           setAccessToken(token);
+          queryClient.clear(); // Wipe any stale cache from a previous user/logout
           toast.success("Successfully logged in with Google!");
-          router.push("/dashboard");
+          router.replace("/dashboard");
         } else {
           toast.error(
             "Authentication succeeded, but no access token was returned.",
@@ -48,7 +57,6 @@ export function GoogleAuthButton({
 
   const loginWithGoogle = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-      // Send the access_token or code to your backend endpoint
       googleAuth({
         data: {
           access_token: tokenResponse.access_token,
