@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, ArrowLeft } from "lucide-react";
@@ -22,32 +23,62 @@ export default function ScanResultsPage() {
   const {
     data: scan,
     isLoading,
+    isFetching,
     isError,
+    error,
     refetch,
   } = useV1ScansRetrieve(scanId, {
     query: {
       enabled: Boolean(scanId),
+      staleTime: 0,
+      gcTime: 0,
+      refetchOnMount: "always",
       refetchInterval: (query) => {
-        const data = query.state.data;
-        if (!data) return 2500;
-        return data.status === "PENDING" || data.status === "PROCESSING"
-          ? 2500
-          : false;
+        const status = query.state.data?.status;
+        if (status === "DONE" || status === "FAILED") {
+          return false;
+        }
+        return 2500;
       },
       refetchIntervalInBackground: true,
     },
   });
 
+  const isTerminal = scan?.status === "DONE" || scan?.status === "FAILED";
+
+  useEffect(() => {
+    if (!scanId || isTerminal) return;
+
+    const interval = setInterval(() => {
+      void refetch();
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [scanId, isTerminal, refetch]);
+
   if (
+    !scanId ||
     isLoading ||
-    scan?.status === "PENDING" ||
-    scan?.status === "PROCESSING"
+    (!scan && isFetching) ||
+    !scan ||
+    scan.status === "PENDING" ||
+    scan.status === "PROCESSING"
   ) {
-    return <ScanPollingState status={scan?.status} onRefetch={() => refetch()} />;
+    return <ScanPollingState status={scan?.status} onRefetch={() => void refetch()} />;
   }
 
-  if (isError || scan?.status === "FAILED" || !scan) {
-    return <ScanFailedState />;
+  if (isError || scan.status === "FAILED") {
+    const axiosErr = error as {
+      message?: string;
+      response?: { data?: { detail?: string; error?: string } };
+    } | null;
+
+    const backendMessage =
+      axiosErr?.response?.data?.detail ||
+      axiosErr?.response?.data?.error ||
+      (isError ? axiosErr?.message : undefined);
+
+    return <ScanFailedState message={backendMessage} />;
   }
 
   return (
@@ -61,7 +92,7 @@ export default function ScanResultsPage() {
             </h1>
             <Badge variant="secondary" className="gap-1">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-              Completed
+              {scan.status === "DONE" ? "Completed" : scan.status}
             </Badge>
           </div>
           {scan.target_job_title && (
@@ -91,9 +122,7 @@ export default function ScanResultsPage() {
         keywords={scan.missing_keywords as readonly string[] | null | undefined}
       />
 
-      <SectionCritiquesCard
-        critiques={scan.section_critiques}
-      />
+      <SectionCritiquesCard critiques={scan.section_critiques} />
     </div>
   );
 }

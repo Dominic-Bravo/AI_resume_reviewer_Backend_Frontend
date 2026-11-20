@@ -1,10 +1,16 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { FileText, Loader2, AlertCircle, PlusCircle } from "lucide-react";
+import { FileText, AlertCircle, PlusCircle } from "lucide-react";
 
 import { useV1ScansHistoryList } from "@/api/generated/endpoints/resume-pipeline/resume-pipeline";
 import { ResumeHistoryCard } from "@/components/history/resume-history-card";
+import { HistoryPageSkeleton } from "@/components/history/history-skeleton";
+import {
+  HistoryFilterBar,
+  type HistoryStatusFilter,
+} from "@/components/history/history-filter-bar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,23 +33,82 @@ function formatDate(isoDate?: string) {
   }).format(parsed);
 }
 
+type ReportLike = {
+  status?: string;
+  target_job_title?: string | null;
+};
+
+type ResumeLike = {
+  id: string | number;
+  file_name?: string;
+  created_at?: string;
+  scan_reports?: readonly ReportLike[] | null;
+};
+
 export default function ScanHistoryPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<HistoryStatusFilter>("all");
+
   const {
     data: resumes,
     isLoading,
     isError,
     refetch,
-  } = useV1ScansHistoryList();
+  } = useV1ScansHistoryList({
+    query: {
+      refetchInterval: (query) => {
+        const list = query.state.data as unknown as ResumeLike[] | undefined;
+        if (!Array.isArray(list)) return false;
+
+        const hasActiveScan = list.some((resume) =>
+          resume.scan_reports?.some(
+            (report) =>
+              report.status === "PENDING" || report.status === "PROCESSING",
+          ),
+        );
+
+        return hasActiveScan ? 4000 : false;
+      },
+      refetchIntervalInBackground: true,
+    },
+  });
+
+  const allResumes = useMemo(
+    () => (Array.isArray(resumes) ? (resumes as unknown as ResumeLike[]) : []),
+    [resumes],
+  );
+
+  const filteredResumes = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+
+    return allResumes.filter((resume) => {
+      const reports = resume.scan_reports ?? [];
+
+      const matchesFilter =
+        statusFilter === "all" ||
+        (statusFilter === "completed" &&
+          reports.some((r) => r.status === "COMPLETED")) ||
+        (statusFilter === "active" &&
+          reports.some(
+            (r) =>
+              r.status === "PENDING" ||
+              r.status === "PROCESSING" ||
+              r.status === "FAILED",
+          ));
+
+      if (!matchesFilter) return false;
+      if (!q) return true;
+
+      const fileMatch = (resume.file_name ?? "").toLowerCase().includes(q);
+      const roleMatch = reports.some((r) =>
+        (r.target_job_title ?? "").toLowerCase().includes(q),
+      );
+      return fileMatch || roleMatch;
+    });
+  }, [allResumes, searchQuery, statusFilter]);
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">
-          Loading your resume scan history...
-        </p>
-      </div>
-    );
+    return <HistoryPageSkeleton />;
   }
 
   if (isError) {
@@ -70,7 +135,7 @@ export default function ScanHistoryPage() {
     );
   }
 
-  const hasResumes = Array.isArray(resumes) && resumes.length > 0;
+  const hasResumes = allResumes.length > 0;
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -82,11 +147,26 @@ export default function ScanHistoryPage() {
             reports.
           </p>
         </div>
-        <Button nativeButton={false} render={<Link href="/dashboard" />}>
+        <Button
+          className="transition-transform active:scale-[0.98]"
+          nativeButton={false}
+          render={<Link href="/dashboard" />}
+        >
           <PlusCircle className="mr-2 h-4 w-4" />
           New Scan
         </Button>
       </div>
+
+      {hasResumes && (
+        <HistoryFilterBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          totalCount={allResumes.length}
+          filteredCount={filteredResumes.length}
+        />
+      )}
 
       {!hasResumes ? (
         <Card>
@@ -100,7 +180,7 @@ export default function ScanHistoryPage() {
               </p>
             </div>
             <Button
-              className="mt-2"
+              className="mt-2 transition-transform active:scale-[0.98]"
               nativeButton={false}
               render={<Link href="/dashboard" />}
             >
@@ -108,12 +188,35 @@ export default function ScanHistoryPage() {
             </Button>
           </CardContent>
         </Card>
+      ) : filteredResumes.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center gap-2 py-10 text-center">
+            <p className="text-sm font-medium">No matching scans found</p>
+            <p className="text-xs text-muted-foreground">
+              Try clearing your search filter or switching status tabs.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={() => {
+                setSearchQuery("");
+                setStatusFilter("all");
+              }}
+            >
+              Reset Filters
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
         <div className="space-y-6">
-          {resumes.map((resume) => (
+          {filteredResumes.map((resume) => (
             <ResumeHistoryCard
               key={resume.id}
-              resume={resume}
+              resume={
+                resume as unknown as Parameters<typeof ResumeHistoryCard>[0]["resume"]
+              }
               formatDate={formatDate}
             />
           ))}

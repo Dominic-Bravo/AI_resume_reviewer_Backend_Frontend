@@ -17,8 +17,7 @@ import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CardContent, CardFooter } from "@/components/ui/card";
-import { useQueryClient } from "@tanstack/react-query";
+import { CardContent, CardFooter } from "@/components/ui/card"; 
 
 const SignupSchema = AuthRegisterBody.refine(
   (data) => data.password === data.password_confirm,
@@ -32,7 +31,6 @@ type SignupFormValues = z.infer<typeof SignupSchema>;
 
 export function SignupForm() {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const {
     register,
