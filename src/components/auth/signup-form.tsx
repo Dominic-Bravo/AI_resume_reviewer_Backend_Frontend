@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
@@ -17,7 +17,7 @@ import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CardContent, CardFooter } from "@/components/ui/card"; 
+import { CardContent, CardFooter } from "@/components/ui/card";
 
 const SignupSchema = AuthRegisterBody.refine(
   (data) => data.password === data.password_confirm,
@@ -77,7 +77,7 @@ export function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="animate-fade-up">
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
@@ -87,10 +87,13 @@ export function SignupForm() {
             autoComplete="email"
             placeholder="you@example.com"
             disabled={isPending}
+            className="transition-colors duration-150 focus-visible:border-foreground/40"
             {...register("email")}
           />
           {errors.email && (
-            <p className="text-xs text-destructive">{errors.email.message}</p>
+            <p className="animate-fade-up text-xs text-destructive">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
@@ -101,10 +104,11 @@ export function SignupForm() {
             type="password"
             autoComplete="new-password"
             disabled={isPending}
+            className="transition-colors duration-150 focus-visible:border-foreground/40"
             {...register("password")}
           />
           {errors.password && (
-            <p className="text-xs text-destructive">
+            <p className="animate-fade-up text-xs text-destructive">
               {errors.password.message}
             </p>
           )}
@@ -117,10 +121,11 @@ export function SignupForm() {
             type="password"
             autoComplete="new-password"
             disabled={isPending}
+            className="transition-colors duration-150 focus-visible:border-foreground/40"
             {...register("password_confirm")}
           />
           {errors.password_confirm && (
-            <p className="text-xs text-destructive">
+            <p className="animate-fade-up text-xs text-destructive">
               {errors.password_confirm.message}
             </p>
           )}
@@ -128,14 +133,21 @@ export function SignupForm() {
       </CardContent>
 
       <CardFooter className="flex flex-col gap-4 pt-2">
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button
+          type="submit"
+          className="group w-full transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]"
+          disabled={isPending}
+        >
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Creating account...
             </>
           ) : (
-            "Create account"
+            <>
+              Create account
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-150 ease-out group-hover:translate-x-1" />
+            </>
           )}
         </Button>
 
@@ -153,7 +165,7 @@ export function SignupForm() {
           Already have an account?{" "}
           <Link
             href="/login"
-            className="font-medium text-primary underline-offset-4 hover:underline"
+            className="font-medium text-primary underline-offset-4 transition-opacity duration-150 hover:opacity-80 hover:underline"
           >
             Sign in
           </Link>

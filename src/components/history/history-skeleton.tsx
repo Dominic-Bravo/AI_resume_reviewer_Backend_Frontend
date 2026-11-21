@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export function HistoryPageSkeleton() {
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="animate-fade-up mx-auto max-w-4xl space-y-6">
       {/* Page Header Skeleton */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-2">
@@ -13,10 +13,23 @@ export function HistoryPageSkeleton() {
         <Skeleton className="h-9 w-28" />
       </div>
 
+      {/* Filter Bar Skeleton */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <Skeleton className="h-9 w-full sm:max-w-sm" />
+        <div className="flex items-center gap-1.5">
+          <Skeleton className="h-8 w-14 rounded-md" />
+          <Skeleton className="h-8 w-24 rounded-md" />
+          <Skeleton className="h-8 w-36 rounded-md" />
+        </div>
+      </div>
+
       {/* Resume History Card Skeletons */}
       <div className="space-y-6">
         {[0, 1].map((cardIndex) => (
-          <Card key={cardIndex}>
+          <Card
+            key={cardIndex}
+            className="transition-colors duration-200 hover:border-foreground/15"
+          >
             <CardHeader className="flex flex-row items-center justify-between gap-2 border-b bg-muted/20">
               <div className="flex items-center gap-3">
                 <Skeleton className="h-5 w-5 rounded" />

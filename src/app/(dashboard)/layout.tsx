@@ -68,9 +68,13 @@ export default function DashboardLayout({
 
   if (!isReady) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="h-5 w-5 animate-spin text-primary" />
-        <span>Verifying session...</span>
+      <div className="animate-fade-up flex min-h-screen flex-col items-center justify-center gap-2.5 text-sm text-muted-foreground">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full border bg-muted/40">
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+        </div>
+        <span className="transition-opacity duration-200">
+          Verifying session...
+        </span>
       </div>
     );
   }
@@ -78,7 +82,9 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       <DashboardNavbar onLogout={handleLogout} isLoggingOut={isLoggingOut} />
-      <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+      <main className="animate-fade-up mx-auto max-w-5xl px-4 py-8">
+        {children}
+      </main>
     </div>
   );
 }

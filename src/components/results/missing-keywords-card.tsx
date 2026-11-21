@@ -29,7 +29,7 @@ export function MissingKeywordsCard({ keywords }: MissingKeywordsCardProps) {
   const resetKeywords = () => setAddressed({});
 
   return (
-    <Card>
+    <Card className="animate-fade-up transition-all duration-200 ease-out hover:border-foreground/20 hover:shadow-md">
       <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-2">
         <div className="space-y-1">
           <CardTitle>Missing Keywords</CardTitle>
@@ -40,7 +40,7 @@ export function MissingKeywordsCard({ keywords }: MissingKeywordsCardProps) {
 
         {list.length > 0 && (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-muted-foreground">
+            <span className="text-xs font-medium tabular-nums text-muted-foreground transition-colors duration-150">
               {addressedCount} of {list.length} addressed
             </span>
             {addressedCount > 0 && (
@@ -49,9 +49,9 @@ export function MissingKeywordsCard({ keywords }: MissingKeywordsCardProps) {
                 variant="ghost"
                 size="sm"
                 onClick={resetKeywords}
-                className="h-7 px-2 text-xs"
+                className="group animate-fade-up h-7 px-2 text-xs transition-all duration-150 ease-out hover:bg-accent active:scale-[0.98]"
               >
-                <RotateCcw className="mr-1 h-3 w-3" />
+                <RotateCcw className="mr-1 h-3 w-3 transition-transform duration-300 ease-out group-hover:-rotate-180" />
                 Reset
               </Button>
             )}
@@ -70,17 +70,19 @@ export function MissingKeywordsCard({ keywords }: MissingKeywordsCardProps) {
                   type="button"
                   onClick={() => toggleKeyword(kw)}
                   aria-pressed={isDone}
-                  className="cursor-pointer rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                  className="cursor-pointer rounded-full transition-transform duration-150 ease-out hover:scale-[1.03] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
                   <Badge
                     variant={isDone ? "secondary" : "destructive"}
-                    className={`gap-1 transition-all ${
+                    className={`gap-1 px-2.5 py-0.5 text-xs transition-all duration-150 ease-out ${
                       isDone
                         ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 line-through dark:text-emerald-400"
-                        : "hover:opacity-90"
+                        : "hover:shadow-2xs"
                     }`}
                   >
-                    {isDone && <Check className="h-3 w-3" />}
+                    {isDone && (
+                      <Check className="h-3 w-3 animate-fade-up text-emerald-600 dark:text-emerald-400" />
+                    )}
                     {kw}
                   </Badge>
                 </button>

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
@@ -27,7 +27,7 @@ export function LoginForm() {
   const queryClient = useQueryClient();
 
   const {
-    register, 
+    register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>({
@@ -63,7 +63,7 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="animate-fade-up">
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
@@ -73,10 +73,13 @@ export function LoginForm() {
             autoComplete="email"
             placeholder="you@example.com"
             disabled={isPending}
+            className="transition-colors duration-150 focus-visible:border-foreground/40"
             {...register("email")}
           />
           {errors.email && (
-            <p className="text-xs text-destructive">{errors.email.message}</p>
+            <p className="animate-fade-up text-xs text-destructive">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
@@ -87,10 +90,11 @@ export function LoginForm() {
             type="password"
             autoComplete="current-password"
             disabled={isPending}
+            className="transition-colors duration-150 focus-visible:border-foreground/40"
             {...register("password")}
           />
           {errors.password && (
-            <p className="text-xs text-destructive">
+            <p className="animate-fade-up text-xs text-destructive">
               {errors.password.message}
             </p>
           )}
@@ -98,14 +102,21 @@ export function LoginForm() {
       </CardContent>
 
       <CardFooter className="flex flex-col gap-4 pt-2">
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button
+          type="submit"
+          className="group w-full transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99]"
+          disabled={isPending}
+        >
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Signing in...
             </>
           ) : (
-            "Sign in"
+            <>
+              Sign in
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-150 ease-out group-hover:translate-x-1" />
+            </>
           )}
         </Button>
 
@@ -123,7 +134,7 @@ export function LoginForm() {
           Don&apos;t have an account?{" "}
           <Link
             href="/signup"
-            className="font-medium text-primary underline-offset-4 hover:underline"
+            className="font-medium text-primary underline-offset-4 transition-opacity duration-150 hover:opacity-80 hover:underline"
           >
             Sign up
           </Link>

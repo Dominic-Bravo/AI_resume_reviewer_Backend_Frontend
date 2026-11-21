@@ -61,9 +61,9 @@ export function ScanPollingState({ status, onRefetch }: ScanPollingStateProps) {
     status === "PROCESSING" ? Math.max(tickStep, 1) : tickStep;
 
   return (
-    <Card className="mx-auto max-w-xl">
+    <Card className="animate-fade-up mx-auto max-w-xl transition-all duration-200 ease-out hover:border-foreground/20 hover:shadow-md">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform duration-200 ease-out hover:scale-105">
           <Loader2 className="h-6 w-6 animate-spin" />
         </div>
         <CardTitle className="text-xl">
@@ -86,14 +86,16 @@ export function ScanPollingState({ status, onRefetch }: ScanPollingStateProps) {
             return (
               <div
                 key={step.id}
-                className={`flex items-start gap-3 rounded-md p-2 transition-colors ${
+                className={`flex items-start gap-3 rounded-md p-2 transition-all duration-200 ease-out ${
                   isCurrent
                     ? "bg-card shadow-xs ring-1 ring-border"
-                    : "opacity-75"
+                    : isDone
+                      ? "opacity-80"
+                      : "opacity-65 hover:opacity-90"
                 }`}
               >
                 <div
-                  className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+                  className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors duration-200 ${
                     isDone
                       ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
                       : isCurrent
@@ -109,7 +111,7 @@ export function ScanPollingState({ status, onRefetch }: ScanPollingStateProps) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p
-                    className={`text-sm font-medium ${
+                    className={`text-sm font-medium transition-colors duration-150 ${
                       isDone
                         ? "text-foreground line-through decoration-muted-foreground/60"
                         : "text-foreground"
@@ -128,14 +130,20 @@ export function ScanPollingState({ status, onRefetch }: ScanPollingStateProps) {
           <Button
             variant="ghost"
             size="sm"
+            className="group transition-all duration-150 ease-out hover:bg-accent active:scale-[0.98]"
             nativeButton={false}
             render={<Link href="/dashboard" />}
           >
-            <ArrowLeft className="mr-1.5 h-4 w-4" />
+            <ArrowLeft className="mr-1.5 h-4 w-4 transition-transform duration-150 ease-out group-hover:-translate-x-1" />
             Back to Scanner
           </Button>
-          <Button variant="outline" size="sm" onClick={onRefetch}>
-            <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onRefetch}
+            className="group transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-accent active:scale-[0.98]"
+          >
+            <RefreshCw className="mr-1.5 h-3.5 w-3.5 transition-transform duration-300 ease-out group-hover:rotate-180" />
             Check Status Now
           </Button>
         </div>
@@ -150,10 +158,10 @@ interface ScanFailedStateProps {
 
 export function ScanFailedState({ message }: ScanFailedStateProps) {
   return (
-    <Card className="mx-auto max-w-lg border-destructive/50">
+    <Card className="animate-fade-up mx-auto max-w-lg border-destructive/50 transition-all duration-200 ease-out hover:border-destructive/75 hover:shadow-md">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-destructive">
-          <AlertCircle className="h-5 w-5" />
+          <AlertCircle className="h-5 w-5 transition-transform duration-200 ease-out hover:scale-110" />
           Analysis Failed
         </CardTitle>
         <CardDescription>
@@ -162,8 +170,12 @@ export function ScanFailedState({ message }: ScanFailedStateProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Button nativeButton={false} render={<Link href="/dashboard" />}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
+        <Button
+          className="group transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-sm active:scale-[0.98]"
+          nativeButton={false}
+          render={<Link href="/dashboard" />}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4 transition-transform duration-150 ease-out group-hover:-translate-x-1" />
           Try Another Resume
         </Button>
       </CardContent>

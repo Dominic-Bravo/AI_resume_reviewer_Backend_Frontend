@@ -15,7 +15,7 @@ export const getAccessToken = () => accessToken;
 
 export const AXIOS_INSTANCE = Axios.create({
   // Note: Orval paths already begin with /api/v1/...
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://rolematch-django.onrender.com",
   withCredentials: true, // Sends the HttpOnly refresh cookie
 });
 

@@ -13,15 +13,15 @@ export default function SignupPage() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted/20 px-4 py-8">
       <Link
         href="/"
-        className="mb-6 flex items-center gap-2 font-bold tracking-tight"
+        className="group animate-fade-up mb-6 flex items-center gap-2 font-bold tracking-tight transition-opacity duration-150 hover:opacity-90"
       >
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <Sparkles className="h-4 w-4" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs transition-all duration-200 ease-out group-hover:-translate-y-0.5 group-hover:scale-105 group-hover:shadow-md">
+          <Sparkles className="h-4 w-4 transition-transform duration-200 ease-out group-hover:rotate-12" />
         </div>
         <span className="text-lg">RoleMatch</span>
       </Link>
 
-      <Card className="w-full max-w-md shadow-sm">
+      <Card className="animate-fade-up w-full max-w-md shadow-sm transition-all duration-200 ease-out hover:border-foreground/20 hover:shadow-md">
         <CardHeader>
           <CardTitle className="text-2xl">Create an account</CardTitle>
           <CardDescription>

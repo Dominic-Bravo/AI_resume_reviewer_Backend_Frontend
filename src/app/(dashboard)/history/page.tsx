@@ -87,7 +87,9 @@ export default function ScanHistoryPage() {
       const matchesFilter =
         statusFilter === "all" ||
         (statusFilter === "completed" &&
-          reports.some((r) => r.status === "COMPLETED")) ||
+          reports.some(
+            (r) => r.status === "DONE" || r.status === "COMPLETED",
+          )) ||
         (statusFilter === "active" &&
           reports.some(
             (r) =>
@@ -113,10 +115,10 @@ export default function ScanHistoryPage() {
 
   if (isError) {
     return (
-      <Card className="mx-auto max-w-lg border-destructive/50">
+      <Card className="animate-fade-up mx-auto max-w-lg border-destructive/50 transition-all duration-200 ease-out hover:border-destructive/75 hover:shadow-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
-            <AlertCircle className="h-5 w-5" />
+            <AlertCircle className="h-5 w-5 transition-transform duration-200 ease-out hover:scale-110" />
             Failed to Load Scan History
           </CardTitle>
           <CardDescription>
@@ -124,10 +126,18 @@ export default function ScanHistoryPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex gap-3">
-          <Button variant="outline" onClick={() => refetch()}>
+          <Button
+            variant="outline"
+            onClick={() => refetch()}
+            className="transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-accent active:scale-[0.98]"
+          >
             Retry
           </Button>
-          <Button nativeButton={false} render={<Link href="/dashboard" />}>
+          <Button
+            className="transition-all duration-150 ease-out hover:-translate-y-0.5 hover:shadow-sm active:scale-[0.98]"
+            nativeButton={false}
+            render={<Link href="/dashboard" />}
+          >
             Go to Scanner
           </Button>
         </CardContent>
@@ -139,8 +149,8 @@ export default function ScanHistoryPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
+      <div className="animate-fade-up flex flex-wrap items-center justify-between gap-4">
+        <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">Scan History</h1>
           <p className="text-muted-foreground">
             Review past AI resume evaluations, ATS match scores, and keyword
@@ -148,11 +158,11 @@ export default function ScanHistoryPage() {
           </p>
         </div>
         <Button
-          className="transition-transform active:scale-[0.98]"
+          className="group transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
           nativeButton={false}
           render={<Link href="/dashboard" />}
         >
-          <PlusCircle className="mr-2 h-4 w-4" />
+          <PlusCircle className="mr-2 h-4 w-4 transition-transform duration-200 ease-out group-hover:rotate-90 group-hover:scale-110" />
           New Scan
         </Button>
       </div>
@@ -169,9 +179,11 @@ export default function ScanHistoryPage() {
       )}
 
       {!hasResumes ? (
-        <Card>
+        <Card className="group animate-fade-up transition-all duration-200 ease-out hover:border-foreground/20 hover:shadow-md">
           <CardContent className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-            <FileText className="h-10 w-10 text-muted-foreground" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border bg-muted/40 text-muted-foreground transition-all duration-200 ease-out group-hover:-translate-y-0.5 group-hover:scale-105 group-hover:border-foreground/20 group-hover:text-foreground">
+              <FileText className="h-5 w-5" />
+            </div>
             <div className="space-y-1">
               <h2 className="text-lg font-semibold">No scans yet</h2>
               <p className="text-sm text-muted-foreground">
@@ -180,7 +192,7 @@ export default function ScanHistoryPage() {
               </p>
             </div>
             <Button
-              className="mt-2 transition-transform active:scale-[0.98]"
+              className="mt-2 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
               nativeButton={false}
               render={<Link href="/dashboard" />}
             >
@@ -189,7 +201,7 @@ export default function ScanHistoryPage() {
           </CardContent>
         </Card>
       ) : filteredResumes.length === 0 ? (
-        <Card>
+        <Card className="animate-fade-up transition-all duration-200 ease-out hover:border-foreground/20 hover:shadow-sm">
           <CardContent className="flex flex-col items-center justify-center gap-2 py-10 text-center">
             <p className="text-sm font-medium">No matching scans found</p>
             <p className="text-xs text-muted-foreground">
@@ -199,7 +211,7 @@ export default function ScanHistoryPage() {
               type="button"
               variant="outline"
               size="sm"
-              className="mt-2"
+              className="mt-2 transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-accent active:scale-[0.98]"
               onClick={() => {
                 setSearchQuery("");
                 setStatusFilter("all");

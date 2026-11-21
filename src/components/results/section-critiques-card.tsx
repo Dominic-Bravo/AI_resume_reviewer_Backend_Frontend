@@ -61,7 +61,7 @@ export function SectionCritiquesCard({ critiques }: SectionCritiquesCardProps) {
   };
 
   return (
-    <Card>
+    <Card className="animate-fade-up transition-all duration-200 ease-out hover:border-foreground/20 hover:shadow-md">
       <CardHeader className="flex flex-row flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
           <CardTitle>Section-by-Section Critiques</CardTitle>
@@ -76,8 +76,9 @@ export function SectionCritiquesCard({ critiques }: SectionCritiquesCardProps) {
             variant="outline"
             size="sm"
             onClick={copyAllRewrites}
+            className="group transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-accent active:scale-[0.98]"
           >
-            <CopyCheck className="mr-1.5 h-3.5 w-3.5" />
+            <CopyCheck className="mr-1.5 h-3.5 w-3.5 transition-transform duration-150 ease-out group-hover:scale-110" />
             Copy All Rewrites ({rewritesAvailable.length})
           </Button>
         )}
@@ -87,16 +88,23 @@ export function SectionCritiquesCard({ critiques }: SectionCritiquesCardProps) {
         {list.length > 0 ? (
           <Accordion className="w-full">
             {list.map((item, index) => (
-              <AccordionItem key={index} value={`critique-${index}`}>
-                <AccordionTrigger className="text-left text-sm font-medium">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
+              <AccordionItem
+                key={index}
+                value={`critique-${index}`}
+                className="transition-colors duration-150"
+              >
+                <AccordionTrigger className="group/trigger rounded-md px-2 text-left text-sm font-medium transition-colors duration-150 hover:bg-muted/40 hover:no-underline">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className="shrink-0 text-xs transition-colors duration-150 group-hover/trigger:border-foreground/30"
+                    >
                       {item.section}
                     </Badge>
                     <span className="truncate">{item.target_item}</span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-3 text-sm leading-relaxed">
+                <AccordionContent className="animate-fade-up space-y-4 px-2 pt-3 text-sm leading-relaxed">
                   <div className="space-y-1">
                     <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Critique
@@ -105,10 +113,10 @@ export function SectionCritiquesCard({ critiques }: SectionCritiquesCardProps) {
                   </div>
 
                   {item.suggested_rewrite && (
-                    <div className="space-y-2 rounded-lg border bg-muted/40 p-4">
-                      <div className="flex items-center justify-between">
+                    <div className="group/rewrite space-y-2 rounded-lg border bg-muted/40 p-4 transition-all duration-200 ease-out hover:border-foreground/20 hover:bg-muted/60">
+                      <div className="flex items-center justify-between gap-2">
                         <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
-                          <Sparkles className="h-3.5 w-3.5" />
+                          <Sparkles className="h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover/rewrite:rotate-12 group-hover/rewrite:scale-110" />
                           Suggested Rewrite
                         </span>
                         <Button
@@ -116,8 +124,9 @@ export function SectionCritiquesCard({ critiques }: SectionCritiquesCardProps) {
                           variant="outline"
                           size="sm"
                           onClick={() => copyText(item.suggested_rewrite)}
+                          className="group/copy transition-all duration-150 ease-out hover:border-foreground/25 hover:bg-accent active:scale-[0.98]"
                         >
-                          <Copy className="mr-1.5 h-3.5 w-3.5" />
+                          <Copy className="mr-1.5 h-3.5 w-3.5 transition-transform duration-150 ease-out group-hover/copy:scale-110" />
                           Copy
                         </Button>
                       </div>

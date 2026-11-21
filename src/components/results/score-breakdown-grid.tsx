@@ -58,33 +58,40 @@ export function ScoreBreakdownGrid({
   const categoryEntries = categoryScores ? Object.entries(categoryScores) : [];
 
   return (
-    <div className="grid gap-6 md:grid-cols-3">
-      <Card className="flex flex-col justify-center">
+    <div className="animate-fade-up grid gap-6 md:grid-cols-3">
+      <Card className="group flex flex-col justify-center transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-md">
         <CardHeader>
           <div className="flex items-center justify-between gap-2">
             <CardDescription>Overall ATS Match Score</CardDescription>
-            <Badge variant={overallMeta.badgeVariant}>{overallMeta.label}</Badge>
+            <Badge
+              variant={overallMeta.badgeVariant}
+              className="transition-transform duration-150 ease-out group-hover:scale-[1.03]"
+            >
+              {overallMeta.label}
+            </Badge>
           </div>
-          <CardTitle className={`text-5xl font-extrabold ${overallMeta.textClass}`}>
+          <CardTitle
+            className={`text-5xl font-extrabold tabular-nums transition-transform duration-200 ease-out group-hover:scale-[1.02] ${overallMeta.textClass}`}
+          >
             {targetScore}%
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Progress
             value={displayedOverall}
-            className={`h-2.5 transition-all duration-700 ${overallMeta.indicatorClass}`}
+            className={`h-2.5 transition-all duration-700 ease-out ${overallMeta.indicatorClass}`}
           />
         </CardContent>
       </Card>
 
-      <Card className="md:col-span-2">
+      <Card className="transition-all duration-200 ease-out hover:border-foreground/20 hover:shadow-md md:col-span-2">
         <CardHeader>
           <CardTitle>Category Breakdown</CardTitle>
           <CardDescription>
             Performance across evaluated professional dimensions
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
+        <CardContent className="grid gap-3 sm:grid-cols-2">
           {categoryEntries.length > 0 ? (
             categoryEntries.map(([key, rawValue]) => {
               const clamped = Math.max(0, Math.min(100, rawValue ?? 0));
@@ -94,14 +101,23 @@ export function ScoreBreakdownGrid({
               const meta = getScoreMeta(clamped);
 
               return (
-                <div key={key} className="space-y-1.5">
+                <div
+                  key={key}
+                  className="group/item space-y-1.5 rounded-lg border border-transparent p-2 transition-all duration-150 ease-out hover:border-border/80 hover:bg-muted/35"
+                >
                   <div className="flex justify-between text-sm font-medium">
-                    <span>{label}</span>
-                    <span className={meta.textClass}>{clamped}%</span>
+                    <span className="transition-colors duration-150 group-hover/item:text-foreground">
+                      {label}
+                    </span>
+                    <span
+                      className={`tabular-nums transition-transform duration-150 ease-out group-hover/item:scale-105 ${meta.textClass}`}
+                    >
+                      {clamped}%
+                    </span>
                   </div>
                   <Progress
                     value={mounted ? clamped : 0}
-                    className={`h-2 transition-all duration-700 ${meta.indicatorClass}`}
+                    className={`h-2 transition-all duration-700 ease-out ${meta.indicatorClass}`}
                   />
                 </div>
               );

@@ -64,7 +64,9 @@ export default function ScanResultsPage() {
     scan.status === "PENDING" ||
     scan.status === "PROCESSING"
   ) {
-    return <ScanPollingState status={scan?.status} onRefetch={() => void refetch()} />;
+    return (
+      <ScanPollingState status={scan?.status} onRefetch={() => void refetch()} />
+    );
   }
 
   if (isError || scan.status === "FAILED") {
@@ -84,14 +86,17 @@ export default function ScanResultsPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
+      <div className="animate-fade-up flex flex-wrap items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight">
               {scan.file_name}
             </h1>
-            <Badge variant="secondary" className="gap-1">
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            <Badge
+              variant="secondary"
+              className="group gap-1 border-emerald-500/25 bg-emerald-500/10 text-emerald-700 transition-all duration-150 ease-out hover:scale-[1.02] hover:bg-emerald-500/15 dark:text-emerald-400"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 transition-transform duration-150 ease-out group-hover:scale-110" />
               {scan.status === "DONE" ? "Completed" : scan.status}
             </Badge>
           </div>
@@ -103,10 +108,11 @@ export default function ScanResultsPage() {
         </div>
         <Button
           variant="outline"
+          className="group transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-accent active:scale-[0.98]"
           nativeButton={false}
           render={<Link href="/dashboard" />}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 h-4 w-4 transition-transform duration-150 ease-out group-hover:-translate-x-1" />
           Scan Another
         </Button>
       </div>

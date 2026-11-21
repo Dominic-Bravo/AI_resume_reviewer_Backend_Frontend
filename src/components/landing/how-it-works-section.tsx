@@ -29,9 +29,9 @@ const STEPS = [
 
 export function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="border-t bg-muted/30 py-20">
+    <section id="how-it-works" className="border-t bg-background py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="animate-fade-up mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight">
             From raw resume to interview-ready in three steps
           </h2>
@@ -43,9 +43,15 @@ export function HowItWorksSection() {
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {STEPS.map(({ step, title, description }) => (
-            <Card key={step}>
+            <Card
+              key={step}
+              className="group animate-fade-up transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-foreground/25 hover:shadow-md"
+            >
               <CardHeader>
-                <Badge variant="outline" className="w-fit">
+                <Badge
+                  variant="outline"
+                  className="w-fit transition-colors duration-200 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground"
+                >
                   {step}
                 </Badge>
                 <CardTitle className="pt-2 text-lg">{title}</CardTitle>

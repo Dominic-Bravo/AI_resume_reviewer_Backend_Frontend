@@ -173,7 +173,7 @@ export function ResumeUploadForm() {
   const wordCount = jobDesc.trim() ? jobDesc.trim().split(/\s+/).length : 0;
 
   return (
-    <Card>
+    <Card className="animate-fade-up transition-all duration-200 ease-out hover:border-foreground/20 hover:shadow-md">
       <CardHeader>
         <CardTitle>New Scan</CardTitle>
         <CardDescription>
@@ -193,17 +193,17 @@ export function ResumeUploadForm() {
             >
               <label
                 htmlFor="resume-file"
-                className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 text-center transition-all duration-150 ${
+                className={`group flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 text-center transition-all duration-200 ease-out ${
                   isDragging
                     ? "scale-[1.01] border-primary bg-primary/5 ring-2 ring-primary/20"
                     : file
-                      ? "border-primary/40 bg-primary/[0.02] hover:border-primary/60"
-                      : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/40"
+                      ? "border-primary/40 bg-primary/[0.02] hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-xs"
+                      : "border-muted-foreground/25 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-muted/40"
                 } ${isPending ? "pointer-events-none opacity-60" : ""}`}
               >
                 {file ? (
                   <div className="flex flex-col items-center gap-2">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform duration-200 ease-out group-hover:scale-105">
                       <FileCheck2 className="h-6 w-6" />
                     </div>
                     <div className="space-y-0.5">
@@ -219,10 +219,10 @@ export function ResumeUploadForm() {
                 ) : (
                   <div className="flex flex-col items-center gap-2">
                     <div
-                      className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
+                      className={`flex h-11 w-11 items-center justify-center rounded-full transition-all duration-200 ease-out ${
                         isDragging
-                          ? "bg-primary/15 text-primary"
-                          : "bg-muted text-muted-foreground"
+                          ? "-translate-y-1 scale-105 bg-primary/15 text-primary"
+                          : "bg-muted text-muted-foreground group-hover:-translate-y-0.5 group-hover:bg-primary/10 group-hover:text-primary"
                       }`}
                     >
                       <UploadCloud className="h-6 w-6" />
@@ -258,7 +258,7 @@ export function ResumeUploadForm() {
                   size="icon"
                   aria-label="Remove selected file"
                   onClick={handleClearFile}
-                  className="absolute top-2.5 right-2.5 h-7 w-7 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  className="absolute top-2.5 right-2.5 h-7 w-7 rounded-full text-muted-foreground transition-all duration-150 hover:scale-105 hover:bg-destructive/10 hover:text-destructive"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -271,10 +271,11 @@ export function ResumeUploadForm() {
             <Label htmlFor="job-title">Target Job Title (Optional)</Label>
             <Input
               id="job-title"
-              placeholder="e.g., Senior Full-Stack Engineer"
+              placeholder="e.g., Product Operations Lead, Marketing Manager, or Backend Engineer"
               value={jobTitle}
               disabled={isPending}
               onChange={(e) => setJobTitle(e.target.value)}
+              className="transition-colors duration-150 focus-visible:border-foreground/40"
             />
           </div>
 
@@ -294,7 +295,7 @@ export function ResumeUploadForm() {
                       type="button"
                       disabled={isPending}
                       onClick={() => setJobDesc("")}
-                      className="text-primary hover:underline disabled:opacity-50"
+                      className="text-primary transition-opacity duration-150 hover:opacity-80 hover:underline disabled:opacity-50"
                     >
                       Clear
                     </button>
@@ -309,12 +310,13 @@ export function ResumeUploadForm() {
               value={jobDesc}
               disabled={isPending}
               onChange={(e) => setJobDesc(e.target.value)}
+              className="transition-colors duration-150 focus-visible:border-foreground/40"
             />
           </div>
 
           <Button
             type="submit"
-            className="w-full transition-transform active:scale-[0.98]"
+            className="group w-full transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
             disabled={isPending || !file}
           >
             {isPending ? (
@@ -324,7 +326,7 @@ export function ResumeUploadForm() {
               </>
             ) : (
               <>
-                <Sparkles className="mr-2 h-4 w-4" />
+                <Sparkles className="mr-2 h-4 w-4 transition-transform duration-200 ease-out group-hover:rotate-12 group-hover:scale-110" />
                 Analyze Resume
               </>
             )}

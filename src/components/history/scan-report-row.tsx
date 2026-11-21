@@ -44,10 +44,10 @@ export function ScanReportRow({ report, formatDate }: ScanReportRowProps) {
     : null;
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border/70 bg-card/50 p-3.5 transition-all duration-150 hover:border-primary/30 hover:bg-muted/40">
+    <div className="group animate-fade-up flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border/70 bg-card/50 p-3.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-muted/40 hover:shadow-xs">
       <div className="space-y-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-medium text-foreground">
+          <span className="font-medium text-foreground transition-colors duration-150 group-hover:text-foreground">
             {report.target_job_title || "General Resume Scan"}
           </span>
           <ScanStatusBadge status={report.status} />
@@ -60,9 +60,11 @@ export function ScanReportRow({ report, formatDate }: ScanReportRowProps) {
       <div className="flex items-center gap-3 sm:gap-4">
         {hasScore && scoreStyles && (
           <div
-            className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-sm font-semibold tabular-nums ${scoreStyles.wrapper}`}
+            className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-sm font-semibold tabular-nums transition-transform duration-200 ease-out group-hover:scale-[1.03] ${scoreStyles.wrapper}`}
           >
-            <Sparkles className={`h-3.5 w-3.5 ${scoreStyles.icon}`} />
+            <Sparkles
+              className={`h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover:rotate-12 ${scoreStyles.icon}`}
+            />
             {report.overall_score}%
           </div>
         )}
@@ -70,12 +72,12 @@ export function ScanReportRow({ report, formatDate }: ScanReportRowProps) {
         <Button
           variant="outline"
           size="sm"
-          className="transition-transform active:scale-[0.98]"
+          className="group/btn transition-all duration-150 ease-out hover:border-foreground/25 hover:bg-accent active:scale-[0.98]"
           nativeButton={false}
           render={<Link href={`/results/${report.id}`} />}
         >
           View Report
-          <ArrowRight className="ml-1.5 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          <ArrowRight className="ml-1.5 h-3.5 w-3.5 transition-transform duration-150 ease-out group-hover/btn:translate-x-1" />
         </Button>
       </div>
     </div>
