@@ -16,14 +16,12 @@ test.describe('RoleMatch Landing Page (Localhost)', () => {
   });
 
   test('navigates from navbar Sign in to /login', async ({ page }) => {
-  await Promise.all([
-    page.waitForURL('**/login', { timeout: 15_000 }),
-    page.getByRole('banner').getByRole('link', { name: /^sign in$/i }).click(),
-  ]);
+  await page.getByRole('banner').getByRole('button', { name: /^sign in$/i }).click();
+  await expect(page).toHaveURL(/\/login$/);
 });
 
   test('navigates from hero CTA to /signup', async ({ page }) => {
-    await page.getByRole('link', { name: /scan your resume free/i }).click();
-    await expect(page).toHaveURL('/signup');
+    await page.getByRole('button', { name: /scan your resume free/i }).click();
+    await expect(page).toHaveURL(/\/signup$/);
   });
 });

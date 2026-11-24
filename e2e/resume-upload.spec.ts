@@ -2,10 +2,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Resume Upload Form (Localhost, Mocked API)', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/**', async (route) => {
+    await page.route('**/api/v1/**', async (route) => {
       const url = route.request().url();
 
-      if (url.includes('/auth/token/refresh')) {
+      if (url.includes('/api/v1/token/refresh/')) {
         return route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -13,7 +13,7 @@ test.describe('Resume Upload Form (Localhost, Mocked API)', () => {
         });
       }
 
-      if (url.includes('/upload-resume')) {
+      if (url.includes('/api/v1/upload-resume/')) {
         return route.fulfill({
           status: 201,
           contentType: 'application/json',
@@ -21,19 +21,11 @@ test.describe('Resume Upload Form (Localhost, Mocked API)', () => {
         });
       }
 
-      if (url.includes('/credits')) {
+      if (url.includes('/api/v1/credits/')) {
         return route.fulfill({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({ credits: 10 }),
-        });
-      }
-
-      if (url.includes('/scans/history')) {
-        return route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify([]),
         });
       }
 
