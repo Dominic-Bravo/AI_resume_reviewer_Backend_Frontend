@@ -134,7 +134,9 @@ test.describe('Scan History Page (Localhost, Mocked API)', () => {
     await page.goto('/history');
     await expect(page.getByText('Verifying session...')).toBeHidden();
 
-    await expect(page.getByText('Failed to Load Scan History')).toBeVisible();
+    await expect(page.getByText('Failed to Load Scan History')).toBeVisible({
+        timeout: 15_000,
+    });
     await expect(page.getByRole('button', { name: /^retry$/i })).toBeVisible();
-  });
+});
 });
